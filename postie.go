@@ -1,13 +1,27 @@
 package main
 
-import "io"
 import "net/http"
+import "github.com/labstack/echo"
 
 func main() {
-	http.HandleFunc("/", hello)
-	http.ListenAndServe(":8000", nil)
+	e := echo.New()
+
+	e.GET("/", home)
+	e.GET("/new", new)
+	e.GET("/:id", requests)
+	e.GET("/:id/x", requests)
+
+	e.Logger.Fatal(e.Start(":1323"))
 }
 
-func hello(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "Hello world!")
+func home(c echo.Context) error {
+	return c.String(http.StatusOK, "Home")
+}
+
+func new(c echo.Context) error {
+	return c.String(http.StatusOK, "New")
+}
+
+func requests(c echo.Context) error {
+	return c.String(http.StatusOK, "Requests")
 }
