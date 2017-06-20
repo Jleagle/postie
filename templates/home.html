@@ -1,5 +1,11 @@
 {{define "home"}}
 {{ template "header" }}
-Hello, {{.}}!
+<div class="jumbotron">
+  <h1>Hello, {{.}}!</h1>
+  <p>...</p>
+  <p><a class="btn btn-primary btn-lg" href="/new" role="button">Create mailbox</a></p>
+</div>
+
 {{ template "footer" }}
+
 {{end}}
