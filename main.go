@@ -14,6 +14,7 @@ func main() {
 	r.Get("/", homeRoute)
 	r.Get("/new", newRoute)
 	r.Get("/:url/x", requestsRoute)
+	r.Get("/:url/ws", wsHandler)
 	r.HandleFunc("/:url", endpointRoute)
 
 	http.ListenAndServe(":8080", r)
