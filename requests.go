@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+
+	"github.com/gorilla/websocket"
 )
 
 func requestsRoute(w http.ResponseWriter, r *http.Request) {
 	// todo, check for 404s
-
-	// url := c.Path
-	// fmt.Println(url.)
+	// http.NotFound(w, r)
 
 	db, _ := connectToSQL()
 	defer db.Close()
@@ -52,3 +52,40 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 }
+
+func wsHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Header.Get("Origin") != "http://"+r.Host {
+		http.Error(w, "Origin not allowed", 403)
+		return
+	}
+
+	conn, err := websocket.Upgrade(w, r, w.Header(), 1024, 1024)
+	if err != nil {
+		http.Error(w, "Could not open websocket connection", http.StatusBadRequest)
+	}
+
+	go echo(conn)
+}
+
+func echo(conn *websocket.Conn) {
+	for {
+		m := request{}
+
+		err := conn.ReadJSON(&m)
+		if err != nil {
+			fmt.Println("Error reading json.", err)
+		}
+
+		fmt.Printf("Got message: %#v\n", m)
+
+		m.ip = "66"
+
+		if err = conn.WriteJSON(m); err != nil {
+			fmt.Println(err)
+		}
+	}
+}
+
+// type msg struct {
+// 	Num int
+// }
