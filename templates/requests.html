@@ -1,25 +1,35 @@
 {{define "requests"}} {{ template "header" }}
 
-<section id="contents">
+<table>
     {{range .Requests}}
-    <p> {{.IP}} </p>
+    <tr>
+        <td>{{.IP}}</td>
+    </tr>
     {{end}}
-</section>
+</table>
 
-<p id="output"></p>
+<script type="text/javascript">
+    if (window.WebSocket === undefined) {
+        console.log('Your browser does not support WebSockets');
+    } else {
 
-<div>
-    <form>
-        <label for="numberfield">Number</label>
-        <input type="text" id="numberfield" value="12" /><br />
-        <button type="button" id="sendBtn">Send</button>
-    </form>
-</div>
-<div id="container"></div>
+        var pathArray = window.location.pathname.split('/');
+        var socket = new WebSocket("ws://" + location.host + "/" + pathArray[1] + "/ws");
 
+        socket.onopen = function () {
+            console.log('Socket opened');
+        };
+        socket.onclose = function () {
+            console.log('Socket closed');
+        }
+        socket.onmessage = function (e) {
+            console.log('Socket data:' + e.data);
+        }
+        socket.onerror = function (e) {
+            console.log('Socket error:' + e.data);
+        }
+    }
 
-</body>
-
-</html>
+</script>
 
 {{ template "footer" }} {{end}}

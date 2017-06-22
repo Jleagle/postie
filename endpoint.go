@@ -3,21 +3,16 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
-	"github.com/pressly/chi"
+	"github.com/go-chi/chi"
 )
 
 func endpointRoute(w http.ResponseWriter, r *http.Request) {
 
+	// Save request to MySQL
 	db, _ := connectToSQL()
 	defer db.Close()
-
-	// headers, _ := httputil.DumpRequest(c.Request(), false)
-
-	// bolB, _ := json.Marshal(true)
-	// fmt.Println(string(bolB))
 
 	url := chi.URLParam(r, "url")
 
@@ -28,33 +23,54 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(queryError)
 	}
 
+	// Send a websocket
+	go sendWebSocket(w, r)
+
+	// Return
 	fmt.Println(url)
 	w.Write([]byte("OK"))
 }
 
-// formatRequest generates ascii representation of a request
-func formatRequest(r *http.Request) string {
-	// Create return string
-	var request []string
-	// Add the request string
-	url := fmt.Sprintf("%v %v %v", r.Method, r.URL, r.Proto)
-	request = append(request, url)
-	// Add the host
-	request = append(request, fmt.Sprintf("Host: %v", r.Host))
-	// Loop through headers
-	for name, headers := range r.Header {
-		name = strings.ToLower(name)
-		for _, h := range headers {
-			request = append(request, fmt.Sprintf("%v: %v", name, h))
-		}
-	}
-
-	// If this is a POST, add post data
-	if r.Method == "POST" {
-		r.ParseForm()
-		request = append(request, "\n")
-		request = append(request, r.Form.Encode())
-	}
-	// Return the request as a string
-	return strings.Join(request, "\n")
+func webSocketRoute(w http.ResponseWriter, r *http.Request) {
+	getWebSocket(w, r)
 }
+
+func sendWebSocket(w http.ResponseWriter, r *http.Request) {
+
+	conn := getWebSocket(w, r)
+
+	m := request{}
+	m.IP = "66"
+
+	err := conn.WriteJSON(m)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+// // formatRequest generates ascii representation of a request
+// func formatRequest(r *http.Request) string {
+// 	// Create return string
+// 	var request []string
+// 	// Add the request string
+// 	url := fmt.Sprintf("%v %v %v", r.Method, r.URL, r.Proto)
+// 	request = append(request, url)
+// 	// Add the host
+// 	request = append(request, fmt.Sprintf("Host: %v", r.Host))
+// 	// Loop through headers
+// 	for name, headers := range r.Header {
+// 		name = strings.ToLower(name)
+// 		for _, h := range headers {
+// 			request = append(request, fmt.Sprintf("%v: %v", name, h))
+// 		}
+// 	}
+
+// 	// If this is a POST, add post data
+// 	if r.Method == "POST" {
+// 		r.ParseForm()
+// 		request = append(request, "\n")
+// 		request = append(request, r.Form.Encode())
+// 	}
+// 	// Return the request as a string
+// 	return strings.Join(request, "\n")
+// }

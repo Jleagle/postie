@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-
-	"github.com/gorilla/websocket"
 )
 
 func requestsRoute(w http.ResponseWriter, r *http.Request) {
@@ -24,6 +22,7 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 	results := []request{}
 	request := request{}
 
+	// Make an array of requests for the template
 	for rows.Next() {
 		var id, time int
 		var url, method, ip, post, headers, body string
@@ -53,30 +52,6 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 	err = t.ExecuteTemplate(w, "requests", vars)
 	if err != nil {
 		panic(err)
-	}
-}
-
-func wsHandler(w http.ResponseWriter, r *http.Request) {
-	conn := makeAWebSocket(w, r)
-
-	go echo(conn)
-}
-
-func echo(conn *websocket.Conn) {
-	for {
-		m := request{}
-
-		err := conn.ReadJSON(&m)
-		if err != nil {
-			fmt.Println("Error reading json.", err)
-		}
-
-		fmt.Printf("Got message: %#v\n", m)
-
-		err = conn.WriteJSON(m)
-		if err != nil {
-			fmt.Println(err)
-		}
 	}
 }
 

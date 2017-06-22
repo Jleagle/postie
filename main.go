@@ -8,6 +8,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+var webSocketConnections map[string]*websocket.Conn
+
 func main() {
 
 	r := chi.NewRouter()
@@ -15,7 +17,7 @@ func main() {
 	r.Get("/", homeRoute)
 	r.Get("/new", newRoute)
 	r.Get("/{url}/x", requestsRoute)
-	r.Get("/{url}/ws", wsHandler)
+	r.Get("/{url}/ws", webSocketRoute)
 	r.HandleFunc("/{url}", endpointRoute)
 
 	http.ListenAndServe(":8080", r)
@@ -31,15 +33,29 @@ func connectToSQL() (*sql.DB, error) {
 	return db, err
 }
 
-func makeAWebSocket(w http.ResponseWriter, r *http.Request) *websocket.Conn {
+func getWebSocket(w http.ResponseWriter, r *http.Request) *websocket.Conn {
 
-	if r.Header.Get("Origin") != "http://"+r.Host {
-		http.Error(w, "Origin not allowed", 403)
+	// Check if map is initialized
+	if webSocketConnections == nil {
+		webSocketConnections = make(map[string]*websocket.Conn)
 	}
 
-	conn, err := websocket.Upgrade(w, r, w.Header(), 1024, 1024)
-	if err != nil {
-		http.Error(w, "Could not open websocket connection", http.StatusBadRequest)
+	// Check if we already have a connection with this key
+	url := chi.URLParam(r, "url")
+	conn, ok := webSocketConnections[url]
+
+	if !ok {
+
+		if r.Header.Get("Origin") != "http://"+r.Host {
+			http.Error(w, "Origin not allowed", 403)
+		}
+
+		conn, err := websocket.Upgrade(w, r, w.Header(), 1024, 1024)
+		if err != nil {
+			http.Error(w, "Could not open websocket connection", http.StatusBadRequest)
+		}
+
+		webSocketConnections[url] = conn
 	}
 
 	return conn
@@ -49,12 +65,12 @@ func makeAWebSocket(w http.ResponseWriter, r *http.Request) *websocket.Conn {
 type request struct {
 	ID      int    `json:"id"`
 	URL     string `json:"url"`
-	Time    int
-	Method  string
+	Time    int    `json:"time"`
+	Method  string `json:"method"`
 	IP      string `json:"ip"`
-	Post    string
-	Headers string
-	Body    string
+	Post    string `json:"post"`
+	Headers string `json:"headers"`
+	Body    string `json:"body"`
 }
 
 // url is the database row
