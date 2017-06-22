@@ -31,20 +31,30 @@ func connectToSQL() (*sql.DB, error) {
 	return db, err
 }
 
-func makeAWebSocket() (*websocket.Conn, error) {
-	return nil, nil
+func makeAWebSocket(w http.ResponseWriter, r *http.Request) *websocket.Conn {
+
+	if r.Header.Get("Origin") != "http://"+r.Host {
+		http.Error(w, "Origin not allowed", 403)
+	}
+
+	conn, err := websocket.Upgrade(w, r, w.Header(), 1024, 1024)
+	if err != nil {
+		http.Error(w, "Could not open websocket connection", http.StatusBadRequest)
+	}
+
+	return conn
 }
 
 // request is the database row
 type request struct {
-	id      int
-	url     string
-	time    int
-	method  string
+	ID      int    `json:"id"`
+	URL     string `json:"url"`
+	Time    int
+	Method  string
 	IP      string `json:"ip"`
-	post    string
-	headers string
-	body    string
+	Post    string
+	Headers string
+	Body    string
 }
 
 // url is the database row

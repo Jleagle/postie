@@ -30,14 +30,14 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 
 		rows.Scan(&id, &url, &time, &method, &ip, &post, &headers, &body)
 
-		request.id = id
-		request.url = url
-		request.time = time
-		request.method = method
+		request.ID = id
+		request.URL = url
+		request.Time = time
+		request.Method = method
 		request.IP = ip
-		request.post = post
-		request.headers = headers
-		request.body = body
+		request.Post = post
+		request.Headers = headers
+		request.Body = body
 
 		results = append(results, request)
 	}
@@ -47,23 +47,17 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	err = t.ExecuteTemplate(w, "requests", results)
+	vars := requestTemplateVars{}
+	vars.Requests = results
+
+	err = t.ExecuteTemplate(w, "requests", vars)
 	if err != nil {
 		panic(err)
 	}
 }
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Header.Get("Origin") != "http://"+r.Host {
-		http.Error(w, "Origin not allowed", 403)
-		return
-	}
-
-	conn, err := websocket.Upgrade(w, r, w.Header(), 1024, 1024)
-	if err != nil {
-		http.Error(w, "Could not open websocket connection", http.StatusBadRequest)
-		return
-	}
+	conn := makeAWebSocket(w, r)
 
 	go echo(conn)
 }
@@ -87,5 +81,5 @@ func echo(conn *websocket.Conn) {
 }
 
 type requestTemplateVars struct {
-	requests []request
+	Requests []request
 }
