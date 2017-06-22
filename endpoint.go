@@ -19,13 +19,16 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 	// bolB, _ := json.Marshal(true)
 	// fmt.Println(string(bolB))
 
+	url := chi.URLParam(r, "url")
+
 	_, queryError := db.Query("INSERT INTO requests (time, url, method, ip, post, headers, body) VALUES (?, ?, ?, ?, ?, ?, ?)",
-		time.Now().Unix(), chi.URLParam(r, "url"), r.Method, r.RemoteAddr, "c.FormParams", "string(headers)", "body")
+		time.Now().Unix(), url, r.Method, r.RemoteAddr, "c.FormParams", "string(headers)", "body")
 
 	if queryError != nil {
 		fmt.Println(queryError)
 	}
 
+	fmt.Println(url)
 	w.Write([]byte("OK"))
 }
 
