@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"net/http"
 
+	"github.com/go-chi/chi"
 	"github.com/gorilla/websocket"
-	"github.com/pressly/chi"
 )
 
 func main() {
