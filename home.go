@@ -42,6 +42,7 @@ func newRoute(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if sqlerr, ok := err.(*mysql.MySQLError); ok {
+			//fmt.Println(sqlerr.Duplicate) // todo, use this?
 			if sqlerr.Number == 1062 { // Duplicate entry
 				continue
 			}

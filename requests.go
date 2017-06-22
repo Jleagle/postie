@@ -34,7 +34,7 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 		request.url = url
 		request.time = time
 		request.method = method
-		request.ip = ip
+		request.IP = ip
 		request.post = post
 		request.headers = headers
 		request.body = body
@@ -62,6 +62,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := websocket.Upgrade(w, r, w.Header(), 1024, 1024)
 	if err != nil {
 		http.Error(w, "Could not open websocket connection", http.StatusBadRequest)
+		return
 	}
 
 	go echo(conn)
@@ -78,14 +79,13 @@ func echo(conn *websocket.Conn) {
 
 		fmt.Printf("Got message: %#v\n", m)
 
-		m.ip = "66"
-
-		if err = conn.WriteJSON(m); err != nil {
+		err = conn.WriteJSON(m)
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 }
 
-// type msg struct {
-// 	Num int
-// }
+type requestTemplateVars struct {
+	requests []request
+}

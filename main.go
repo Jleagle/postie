@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 
+	"github.com/gorilla/websocket"
 	"github.com/pressly/chi"
 )
 
@@ -30,13 +31,17 @@ func connectToSQL() (*sql.DB, error) {
 	return db, err
 }
 
+func makeAWebSocket() (*websocket.Conn, error) {
+	return nil, nil
+}
+
 // request is the database row
 type request struct {
 	id      int
 	url     string
 	time    int
 	method  string
-	ip      string
+	IP      string `json:"ip"`
 	post    string
 	headers string
 	body    string
