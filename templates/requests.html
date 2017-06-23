@@ -1,11 +1,18 @@
 {{define "requests"}} {{ template "header" }}
 
 <table>
-    {{range .Requests}}
-    <tr>
-        <td>{{.IP}}</td>
-    </tr>
-    {{end}}
+    <thead>
+        <tr>
+            <th>IP</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Requests}}
+        <tr>
+            <td>{{.IP}}</td>
+        </tr>
+        {{end}}
+    </tbody>
 </table>
 
 <script type="text/javascript">
@@ -24,6 +31,14 @@
         }
         socket.onmessage = function (e) {
             console.log('Socket data: ' + e.data);
+
+            var data = JSON.parse(e.data);
+
+            $("table tbody").prepend(
+                $('<tr>').append(
+                    $('<td>').text(data.ip),
+                ).hide()
+            ).find('tr').slideDown();
         }
         socket.onerror = function (e) {
             console.log('Socket error: ' + e.data);
