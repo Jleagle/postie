@@ -4,16 +4,20 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+
+	"github.com/go-chi/chi"
 )
 
 func requestsRoute(w http.ResponseWriter, r *http.Request) {
 	// todo, check for 404s
 	// http.NotFound(w, r)
 
+	url := chi.URLParam(r, "url")
+
 	db, _ := connectToSQL()
 	defer db.Close()
 
-	rows, err := db.Query("SELECT * FROM requests ORDER BY id ASC")
+	rows, err := db.Query("SELECT * FROM requests WHERE url = ? ORDER BY id ASC", url)
 	if err != nil {
 		fmt.Println(err)
 	}

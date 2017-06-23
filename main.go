@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var webSocketConnections map[string]*websocket.Conn
+var webSockets []webSocket
 
 func main() {
 
@@ -33,34 +33,6 @@ func connectToSQL() (*sql.DB, error) {
 	return db, err
 }
 
-func getWebSocket(w http.ResponseWriter, r *http.Request) *websocket.Conn {
-
-	// Check if map is initialized
-	if webSocketConnections == nil {
-		webSocketConnections = make(map[string]*websocket.Conn)
-	}
-
-	// Check if we already have a connection with this key
-	url := chi.URLParam(r, "url")
-	conn, ok := webSocketConnections[url]
-
-	if !ok {
-
-		if r.Header.Get("Origin") != "http://"+r.Host {
-			http.Error(w, "Origin not allowed", 403)
-		}
-
-		conn, err := websocket.Upgrade(w, r, w.Header(), 1024, 1024)
-		if err != nil {
-			http.Error(w, "Could not open websocket connection", http.StatusBadRequest)
-		}
-
-		webSocketConnections[url] = conn
-	}
-
-	return conn
-}
-
 // request is the database row
 type request struct {
 	ID      int    `json:"id"`
@@ -77,4 +49,10 @@ type request struct {
 type url struct {
 	id  int
 	url string
+}
+
+type webSocket struct {
+	key        string
+	time       int64
+	connection *websocket.Conn
 }

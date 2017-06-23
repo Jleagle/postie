@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
+	"github.com/gorilla/websocket"
 )
 
 func endpointRoute(w http.ResponseWriter, r *http.Request) {
@@ -23,8 +24,20 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(queryError)
 	}
 
-	// Send a websocket
-	go sendWebSocket(w, r)
+	// Check if there are websockets to send to
+	for _, webSocket := range webSockets {
+		if webSocket.key == url {
+			m := request{}
+			m.IP = "66"
+
+			// fmt.Printf("TEST: %v", conn)
+
+			err := webSocket.connection.WriteJSON(m)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+	}
 
 	// Return
 	fmt.Println(url)
@@ -32,22 +45,34 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func webSocketRoute(w http.ResponseWriter, r *http.Request) {
-	getWebSocket(w, r)
-}
 
-func sendWebSocket(w http.ResponseWriter, r *http.Request) {
-
-	conn := getWebSocket(w, r)
-
-	m := request{}
-	m.IP = "66"
-
-	err := conn.WriteJSON(m)
-	if err != nil {
-		fmt.Println(err)
+	// Validation
+	if r.Header.Get("Origin") != "http://"+r.Host {
+		http.Error(w, "Origin not allowed", 403)
 	}
+
+	// Initialized slice
+	if webSockets == nil {
+		webSockets = []webSocket{}
+	}
+
+	// Make a connection
+	conn, err := websocket.Upgrade(w, r, w.Header(), 1024, 1024)
+	if err != nil {
+		http.Error(w, "Could not open websocket connection", http.StatusBadRequest)
+		fmt.Printf("%s\n", err.Error())
+	}
+
+	// Save the connection
+	newSocket := webSocket{}
+	newSocket.connection = conn
+	newSocket.time = time.Now().Unix()
+	newSocket.key = chi.URLParam(r, "url")
+
+	webSockets = append(webSockets, newSocket)
 }
 
+// https://medium.com/doing-things-right/pretty-printing-http-requests-in-golang-a918d5aaa000
 // // formatRequest generates ascii representation of a request
 // func formatRequest(r *http.Request) string {
 // 	// Create return string

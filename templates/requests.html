@@ -16,17 +16,17 @@
         var pathArray = window.location.pathname.split('/');
         var socket = new WebSocket("ws://" + location.host + "/" + pathArray[1] + "/ws");
 
-        socket.onopen = function () {
+        socket.onopen = function (e) {
             console.log('Socket opened');
         };
-        socket.onclose = function () {
-            console.log('Socket closed');
+        socket.onclose = function (e) {
+            console.log('Socket closed: ' + e.data);
         }
         socket.onmessage = function (e) {
-            console.log('Socket data:' + e.data);
+            console.log('Socket data: ' + e.data);
         }
         socket.onerror = function (e) {
-            console.log('Socket error:' + e.data);
+            console.log('Socket error: ' + e.data);
         }
     }
 
