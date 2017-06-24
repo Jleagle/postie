@@ -22,6 +22,19 @@ func homeRoute(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func infoRoute(w http.ResponseWriter, r *http.Request) {
+
+	t, err := template.ParseGlob("templates/*.html")
+	if err != nil {
+		panic(err)
+	}
+
+	err = t.ExecuteTemplate(w, "info", nil)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func newRoute(w http.ResponseWriter, r *http.Request) {
 
 	db, _ := connectToSQL()
