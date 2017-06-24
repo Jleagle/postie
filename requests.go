@@ -52,6 +52,8 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 
 	vars := requestTemplateVars{}
 	vars.Requests = results
+	vars.Domain = r.Host
+	vars.URL = url
 
 	err = t.ExecuteTemplate(w, "requests", vars)
 	if err != nil {
@@ -61,4 +63,6 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 
 type requestTemplateVars struct {
 	Requests []request
+	Domain   string
+	URL      string
 }

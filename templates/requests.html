@@ -1,14 +1,23 @@
 {{define "requests"}} {{ template "header" }}
 
-<table>
+<div class="input-group input-group-lg" style="margin-bottom:20px;">
+    <span class="input-group-addon" id="sizing-addon1">Endpoint:</span>
+    <input type="text" class="form-control" value="http://{{.Domain}}/{{.URL}}" onClick="this.select();">
+</div>
+
+<table class="table table-hover table-condensed table-responsive">
     <thead>
         <tr>
-            <th>IP</th>
+            <th>Info</th>
+            <th>POST</th>
+            <th>Headers</th>
         </tr>
     </thead>
     <tbody>
         {{range .Requests}}
         <tr>
+            <td>{{.IP}}</td>
+            <td>{{.IP}}</td>
             <td>{{.IP}}</td>
         </tr>
         {{end}}
@@ -34,11 +43,9 @@
 
             var data = JSON.parse(e.data);
 
-            $("table tbody").prepend(
-                $('<tr>').append(
-                    $('<td>').text(data.ip),
-                ).hide()
-            ).find('tr').slideDown();
+            var row = $('<tr><td>' + data.ip + '</td></tr>').hide();
+
+            $("table tbody").prepend(row).find('tr').slideDown();
         }
         socket.onerror = function (e) {
             console.log('Socket error: ' + e.data);
