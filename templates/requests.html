@@ -2,7 +2,7 @@
 
 <div class="input-group input-group-lg" style="margin-bottom:20px;">
     <span class="input-group-addon" id="sizing-addon1">Endpoint:</span>
-    <input type="text" class="form-control" value="http://{{.Domain}}/{{.URL}}" onClick="this.select();">
+    <input type="text" class="form-control" value="http://{{.Domain}}/{{.URL}}" id="input">
 </div>
 
 <table class="table table-hover table-condensed table-responsive">
@@ -25,6 +25,16 @@
 </table>
 
 <script type="text/javascript">
+    $("#input")
+        .on('click', function () {
+            this.select();
+            document.execCommand("copy");
+            Push.create('Copied to clipboard!');
+            $(this).parent().addClass("has-success");
+        }).on('blur', function () {
+            $(this).parent().removeClass("has-success");
+        });
+
     if (window.WebSocket === undefined) {
         console.log('Your browser does not support WebSockets');
     } else {
@@ -40,6 +50,8 @@
         }
         socket.onmessage = function (e) {
             console.log('Socket data: ' + e.data);
+
+            Push.create('New request! ' + window.performance.now())
 
             var data = JSON.parse(e.data);
 
