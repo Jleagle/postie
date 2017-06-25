@@ -35,33 +35,28 @@
             $(this).parent().removeClass("has-success");
         });
 
-    if (window.WebSocket === undefined) {
-        console.log('Your browser does not support WebSockets');
-    } else {
+    var pathArray = window.location.pathname.split('/');
+    var socket = new WebSocket("ws://" + location.host + "/" + pathArray[1] + "/ws");
 
-        var pathArray = window.location.pathname.split('/');
-        var socket = new WebSocket("ws://" + location.host + "/" + pathArray[1] + "/ws");
+    socket.onopen = function (e) {
+        console.log('Socket opened');
+    };
+    socket.onclose = function (e) {
+        console.log('Socket closed: ' + e.data);
+    }
+    socket.onmessage = function (e) {
+        console.log('Socket data: ' + e.data);
 
-        socket.onopen = function (e) {
-            console.log('Socket opened');
-        };
-        socket.onclose = function (e) {
-            console.log('Socket closed: ' + e.data);
-        }
-        socket.onmessage = function (e) {
-            console.log('Socket data: ' + e.data);
+        Push.create('New request! ' + window.performance.now())
 
-            Push.create('New request! ' + window.performance.now())
+        var data = JSON.parse(e.data);
 
-            var data = JSON.parse(e.data);
+        var row = $('<tr><td>' + data.ip + '</td><td>' + data.post + '</td><td>' + data.headers + '</td></tr>').hide();
 
-            var row = $('<tr><td>' + data.ip + '</td><td>' + data.post + '</td><td>' + data.headers + '</td></tr>').hide();
-
-            $("table tbody").prepend(row).find('tr').slideDown();
-        }
-        socket.onerror = function (e) {
-            console.log('Socket error: ' + e.data);
-        }
+        $("table tbody").prepend(row).find('tr').slideDown();
+    }
+    socket.onerror = function (e) {
+        console.log('Socket error: ' + e.data);
     }
 
 </script>
