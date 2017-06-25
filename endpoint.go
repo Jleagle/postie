@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -11,14 +13,29 @@ import (
 
 func endpointRoute(w http.ResponseWriter, r *http.Request) {
 
+	r.ParseForm()
+
+	// Gather data
+	url := chi.URLParam(r, "url")
+	headers, _ := json.Marshal(r.Header)
+	body, _ := ioutil.ReadAll(r.Body)
+	form, _ := json.Marshal(r.Form)
+
 	// Save request to MySQL
 	db, _ := connectToSQL()
 	defer db.Close()
 
-	url := chi.URLParam(r, "url")
+	request := request{}
+	request.Time = time.Now().Unix()
+	request.URL = url
+	request.Method = r.Method
+	request.IP = r.RemoteAddr
+	request.Post = string(form)
+	request.Headers = string(headers)
+	request.Body = string(body)
 
 	_, queryError := db.Query("INSERT INTO requests (time, url, method, ip, post, headers, body) VALUES (?, ?, ?, ?, ?, ?, ?)",
-		time.Now().Unix(), url, r.Method, r.RemoteAddr, "c.FormParams", "string(headers)", "body")
+		request.Time, request.URL, request.Method, request.IP, request.Post, request.Headers, request.Body)
 
 	if queryError != nil {
 		fmt.Println(queryError)
@@ -27,12 +44,7 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 	// Check if there are websockets to send to
 	for _, webSocket := range webSockets {
 		if webSocket.key == url {
-			m := request{}
-			m.IP = "66"
-
-			// fmt.Printf("TEST: %v", conn)
-
-			err := webSocket.connection.WriteJSON(m)
+			err := webSocket.connection.WriteJSON(request)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -71,31 +83,3 @@ func webSocketRoute(w http.ResponseWriter, r *http.Request) {
 
 	webSockets = append(webSockets, newSocket)
 }
-
-// https://medium.com/doing-things-right/pretty-printing-http-requests-in-golang-a918d5aaa000
-// // formatRequest generates ascii representation of a request
-// func formatRequest(r *http.Request) string {
-// 	// Create return string
-// 	var request []string
-// 	// Add the request string
-// 	url := fmt.Sprintf("%v %v %v", r.Method, r.URL, r.Proto)
-// 	request = append(request, url)
-// 	// Add the host
-// 	request = append(request, fmt.Sprintf("Host: %v", r.Host))
-// 	// Loop through headers
-// 	for name, headers := range r.Header {
-// 		name = strings.ToLower(name)
-// 		for _, h := range headers {
-// 			request = append(request, fmt.Sprintf("%v: %v", name, h))
-// 		}
-// 	}
-
-// 	// If this is a POST, add post data
-// 	if r.Method == "POST" {
-// 		r.ParseForm()
-// 		request = append(request, "\n")
-// 		request = append(request, r.Form.Encode())
-// 	}
-// 	// Return the request as a string
-// 	return strings.Join(request, "\n")
-// }

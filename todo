@@ -1,0 +1,16 @@
+Do i need a rl table?
+
+check for mailboxes that are not created yet
+ability to delete mailboxes
+show the endpoint url
+only parse the templates you need to
+browser alerts
+copy to clipboard when click endpoint
+delete old websocket connections
+
+get rid of auto inc on requests table, order by timestamp
+think of limits on the requests table, maybe casandra?
+
+delete requests that havent been updated in a while
+
+remember last few urls with javascript and link in header

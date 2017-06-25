@@ -17,8 +17,8 @@
         {{range .Requests}}
         <tr>
             <td>{{.IP}}</td>
-            <td>{{.IP}}</td>
-            <td>{{.IP}}</td>
+            <td>{{.Post}}</td>
+            <td>{{.Headers}}</td>
         </tr>
         {{end}}
     </tbody>
@@ -55,7 +55,7 @@
 
             var data = JSON.parse(e.data);
 
-            var row = $('<tr><td>' + data.ip + '</td></tr>').hide();
+            var row = $('<tr><td>' + data.ip + '</td><td>' + data.post + '</td><td>' + data.headers + '</td></tr>').hide();
 
             $("table tbody").prepend(row).find('tr').slideDown();
         }

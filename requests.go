@@ -28,7 +28,8 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 
 	// Make an array of requests for the template
 	for rows.Next() {
-		var id, time int
+		var id int
+		var time int64
 		var url, method, ip, post, headers, body string
 
 		rows.Scan(&id, &url, &time, &method, &ip, &post, &headers, &body)

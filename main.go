@@ -65,7 +65,7 @@ func connectToSQL() (*sql.DB, error) {
 type request struct {
 	ID      int    `json:"id"`
 	URL     string `json:"url"`
-	Time    int    `json:"time"`
+	Time    int64  `json:"time"`
 	Method  string `json:"method"`
 	IP      string `json:"ip"`
 	Post    string `json:"post"`
