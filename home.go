@@ -11,7 +11,7 @@ import (
 
 func homeRoute(w http.ResponseWriter, r *http.Request) {
 
-	t, err := template.ParseGlob("templates/*.html")
+	t, err := template.ParseFiles("templates/header.html", "templates/footer.html", "templates/home.html")
 	if err != nil {
 		panic(err)
 	}
@@ -24,7 +24,7 @@ func homeRoute(w http.ResponseWriter, r *http.Request) {
 
 func infoRoute(w http.ResponseWriter, r *http.Request) {
 
-	t, err := template.ParseGlob("templates/*.html")
+	t, err := template.ParseFiles("templates/header.html", "templates/footer.html", "templates/info.html")
 	if err != nil {
 		panic(err)
 	}
@@ -50,12 +50,11 @@ func newRoute(w http.ResponseWriter, r *http.Request) {
 
 		if err == nil {
 			defer insert.Close()
-			http.Redirect(w, r, "/"+randomString+"/x", http.StatusTemporaryRedirect)
+			http.Redirect(w, r, "/"+randomString+"/list", http.StatusTemporaryRedirect)
 			return
 		}
 
 		if sqlerr, ok := err.(*mysql.MySQLError); ok {
-			//fmt.Println(sqlerr.Duplicate) // todo, use this?
 			if sqlerr.Number == 1062 { // Duplicate entry
 				continue
 			}
