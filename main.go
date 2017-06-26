@@ -80,7 +80,6 @@ type request struct {
 
 func (r request) GetInfo() string {
 	bytes, _ := json.Marshal(map[string]interface{}{"HTTP Method": r.Method, "IP": r.IP, "Time": r.Time, "Referer": r.Referer, "Body": r.Body})
-
 	return string(bytes)
 }
 

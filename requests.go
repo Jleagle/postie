@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"net/http"
 
+	"encoding/json"
+
 	"github.com/go-chi/chi"
 )
 
@@ -48,8 +50,10 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	resultsByteArray, err := json.Marshal(results)
+
 	vars := requestTemplateVars{}
-	vars.Requests = results
+	vars.Requests = string(resultsByteArray)
 	vars.Domain = r.Host
 	vars.URL = url
 
@@ -77,7 +81,7 @@ func clearRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 type requestTemplateVars struct {
-	Requests []request
+	Requests string
 	Domain   string
 	URL      string
 }

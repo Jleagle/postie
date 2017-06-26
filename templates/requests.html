@@ -16,36 +16,30 @@
         </tr>
     </thead>
     <tbody>
-        {{range .Requests}}
-        <tr>
-            <td class="json">{{.GetInfo}}</td>
-            <td class="json">{{.Post}}</td>
-            <td class="json">{{.Headers}}</td>
-        </tr>
-        {{end}}
+
     </tbody>
 </table>
 
 <script type="text/javascript">
-    // var data = '[{"Accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"],"Accept-Encoding":["gzip, deflate, br"],"Accept-Language":["en-GB,en-US;q=0.8,en;q=0.6"],"Cache-Control":["max-age=0"],"Connection":["keep-alive"],"Upgrade-Insecure-Requests":["1"],"User-Agent":["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.104 Safari/537.36"]}]';
-    // $("div#test").tree({
-    //     data: JSON.parse(data),
-    //     autoOpen: true,
-    //     dragAndDrop: false
-    // });
-
-    function formatJson($tr) {
-        $tr.find('td.json').each(function () {
-            var data = JSON.parse($(this).html());
-            console.log(data);
-            $(this).html(JSON.stringify(data, null, 4))
-        })
-    }
-
-    // Formatting the JSON
-    $('tr').each(function () {
-        formatJson($(this));
+    // Load data into table rows
+    $.each(JSON.parse('{{.Requests}}'), function (index, item) {
+        addRow(item);
     });
+
+    function addRow(data) {
+
+        data.info = JSON.stringify({
+            'method': data.method,
+            'ip': data.ip,
+            'time': data.time,
+            'referer': data.referer,
+            'body': data.body
+        });
+
+        var row = $('<tr><td>' + data.info + '</td><td>' + data.post + '</td><td>' + data.headers + '</td></tr>');
+        $('table tbody').prepend(row);
+        
+    }
 
     // Clicking the endpoint URL
     $("#input")
@@ -58,6 +52,7 @@
             $(this).parent().removeClass("has-success");
         });
 
+    // Handle WebSockets
     if (window.WebSocket === undefined) {
         console.log('Your browser does not support WebSockets');
     } else {
@@ -65,33 +60,18 @@
         var socket = new WebSocket("ws://" + location.host + "/" + pathArray[1] + "/ws");
 
         socket.onopen = function (e) {
-            console.log('Socket opened');
+            console.log('WebSocket opened');
         };
         socket.onclose = function (e) {
-            console.log('Socket closed: ' + e.data);
+            console.log('WebSocket closed');
         }
         socket.onmessage = function (e) {
-            console.log('Socket data: ' + e.data);
-
-            var data = JSON.parse(e.data);
-
-            data.info = JSON.stringify({
-                'method': data.method,
-                'ip': data.ip,
-                'time': data.time,
-                'referer': data.referer,
-                'body': data.body
-            });
-
-            Push.create('New request! ' + window.performance.now())
-
-            var row = $('<tr><td class="json">' + data.info + '</td><td class="json">' + data.post + '</td><td class="json">' + data.headers + '</td></tr>').hide();
-            formatJson(row);
-
-            $("table tbody").prepend(row).find('tr').slideDown();
+            console.log('WebSocket recieved');
+            Push.create('New request')
+            addRow(JSON.parse(e.data));
         }
         socket.onerror = function (e) {
-            console.log('Socket error: ' + e.data);
+            console.log('WebSocket error: ' + e.data);
         }
     }
 
