@@ -9,15 +9,13 @@ import (
 )
 
 func requestsRoute(w http.ResponseWriter, r *http.Request) {
-	// todo, check for 404s
-	// http.NotFound(w, r)
 
 	url := chi.URLParam(r, "url")
 
 	db, _ := connectToSQL()
 	defer db.Close()
 
-	rows, err := db.Query("SELECT * FROM requests WHERE url = ? ORDER BY id DESC", url)
+	rows, err := db.Query("SELECT * FROM requests WHERE url = ? ORDER BY time DESC", url)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -28,13 +26,11 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 
 	// Make an array of requests for the template
 	for rows.Next() {
-		var id int
 		var time int64
-		var url, method, ip, post, headers, body string
+		var url, method, ip, post, headers, body, referer string
 
-		rows.Scan(&id, &url, &time, &method, &ip, &post, &headers, &body)
+		rows.Scan(&url, &time, &method, &ip, &post, &headers, &body, &referer)
 
-		request.ID = id
 		request.URL = url
 		request.Time = time
 		request.Method = method
@@ -42,11 +38,12 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 		request.Post = post
 		request.Headers = headers
 		request.Body = body
+		request.Referer = referer
 
 		results = append(results, request)
 	}
 
-	t, err := template.ParseGlob("templates/*.html")
+	t, err := template.ParseFiles("templates/header.html", "templates/footer.html", "templates/requests.html")
 	if err != nil {
 		panic(err)
 	}
@@ -60,6 +57,23 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func clearRoute(w http.ResponseWriter, r *http.Request) {
+
+	url := chi.URLParam(r, "url")
+
+	db, _ := connectToSQL()
+	defer db.Close()
+
+	_, err := db.Query("DELETE FROM requests WHERE url = ?", url)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer db.Close()
+
+	http.Redirect(w, r, "/"+url+"/list", http.StatusTemporaryRedirect)
+	return
 }
 
 type requestTemplateVars struct {
