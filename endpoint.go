@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"regexp"
 	"time"
 
 	"github.com/go-chi/chi"
@@ -13,10 +14,18 @@ import (
 
 func endpointRoute(w http.ResponseWriter, r *http.Request) {
 
+	url := chi.URLParam(r, "url")
+
+	match, _ := regexp.MatchString("^[A-Z0-9]{10}$", url)
+	fmt.Println(match)
+	if !match {
+		http.NotFound(w, r)
+		return
+	}
+
 	r.ParseForm()
 
 	// Gather data
-	url := chi.URLParam(r, "url")
 	headers, _ := json.Marshal(r.Header)
 	body, _ := ioutil.ReadAll(r.Body)
 	form, _ := json.Marshal(r.Form)
@@ -26,16 +35,17 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	request := request{}
-	request.Time = time.Now().Unix()
+	request.Time = time.Now().UnixNano()
 	request.URL = url
 	request.Method = r.Method
 	request.IP = r.RemoteAddr
 	request.Post = string(form)
 	request.Headers = string(headers)
 	request.Body = string(body)
+	request.Referer = r.Referer()
 
-	_, queryError := db.Query("INSERT INTO requests (time, url, method, ip, post, headers, body) VALUES (?, ?, ?, ?, ?, ?, ?)",
-		request.Time, request.URL, request.Method, request.IP, request.Post, request.Headers, request.Body)
+	_, queryError := db.Query("INSERT INTO requests (time, url, method, ip, post, headers, body, referer) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+		request.Time, request.URL, request.Method, request.IP, request.Post, request.Headers, request.Body, request.Referer)
 
 	if queryError != nil {
 		fmt.Println(queryError)
@@ -52,7 +62,6 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Return
-	fmt.Println(url)
 	w.Write([]byte("OK"))
 }
 

@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"encoding/json"
+
 	"github.com/go-chi/chi"
 	"github.com/gorilla/websocket"
 )
@@ -20,20 +22,23 @@ func main() {
 	r.Get("/", homeRoute)
 	r.Get("/info", infoRoute)
 	r.Get("/new", newRoute)
-	r.Get("/{url}/x", requestsRoute)
+	r.Get("/send", sendRoute)
+	r.Get("/{url}/list", requestsRoute)
 	r.Get("/{url}/ws", webSocketRoute)
+	r.Get("/{url}/clear", clearRoute)
 	r.HandleFunc("/{url}", endpointRoute)
 
 	workDir, _ := os.Getwd()
 	filesDir := filepath.Join(workDir, "assets")
-	FileServer(r, "/assets", http.Dir(filesDir))
+	fileServer(r, "/assets", http.Dir(filesDir))
 
 	http.ListenAndServe(":8080", r)
 }
 
 // FileServer conveniently sets up a http.FileServer handler to serve
 // static files from a http.FileSystem.
-func FileServer(r chi.Router, path string, root http.FileSystem) {
+func fileServer(r chi.Router, path string, root http.FileSystem) {
+
 	if strings.ContainsAny(path, "{}*") {
 		panic("FileServer does not permit URL parameters.")
 	}
@@ -63,7 +68,6 @@ func connectToSQL() (*sql.DB, error) {
 
 // request is the database row
 type request struct {
-	ID      int    `json:"id"`
 	URL     string `json:"url"`
 	Time    int64  `json:"time"`
 	Method  string `json:"method"`
@@ -71,6 +75,13 @@ type request struct {
 	Post    string `json:"post"`
 	Headers string `json:"headers"`
 	Body    string `json:"body"`
+	Referer string `json:"referer"`
+}
+
+func (r request) GetInfo() string {
+	bytes, _ := json.Marshal(map[string]interface{}{"HTTP Method": r.Method, "IP": r.IP, "Time": r.Time, "Referer": r.Referer, "Body": r.Body})
+
+	return string(bytes)
 }
 
 // url is the database row
@@ -79,6 +90,7 @@ type url struct {
 	url string
 }
 
+// webSocket is how we store websockets
 type webSocket struct {
 	key        string
 	time       int64
