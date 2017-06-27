@@ -17,7 +17,6 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 	url := chi.URLParam(r, "url")
 
 	match, _ := regexp.MatchString("^[A-Z0-9]{10}$", url)
-	fmt.Println(match)
 	if !match {
 		http.NotFound(w, r)
 		return
