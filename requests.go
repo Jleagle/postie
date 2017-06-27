@@ -17,7 +17,7 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 	db, _ := connectToSQL()
 	defer db.Close()
 
-	rows, err := db.Query("SELECT * FROM requests WHERE url = ? ORDER BY time DESC", url)
+	rows, err := db.Query("SELECT * FROM requests WHERE url = ? ORDER BY time ASC", url)
 	if err != nil {
 		fmt.Println(err)
 	}

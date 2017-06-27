@@ -1,24 +1,31 @@
 {{define "requests"}} {{ template "header" }}
 
-<div class="input-group input-group-lg" style="margin-bottom:20px;">
-    <span class="input-group-addon" id="sizing-addon1">Endpoint:</span>
-    <input type="text" class="form-control" value="http://{{.Domain}}/{{.URL}}" id="input">
+<div class="container">
+    <div class="input-group input-group-lg" style="margin-bottom:20px;">
+        <span class="input-group-btn" id="green-button">
+            <span class="btn btn-success">Endpoint URL:</span>
+        </span>
+        <input type="text" class="form-control" value="http://{{.Domain}}/{{.URL}}" id="input">
+        <span class="input-group-btn">
+            <a href="/{{.URL}}/clear" class="btn btn-danger" role="button">Clear Requests</a>
+        </span>
+    </div>
 </div>
 
-<a href="/{{.URL}}/clear" class="btn btn-danger" role="button" style="float:right;">Clear</a>
+<div class="container-fluid">
+    <table class="table table-hover table-condensed table-responsive" id="requests">
+        <thead>
+            <tr>
+                <th style="width:20%;">Info</th>
+                <th style="width:40%;">POST</th>
+                <th style="width:40%;">Headers</th>
+            </tr>
+        </thead>
+        <tbody>
 
-<table class="table table-hover table-condensed table-responsive">
-    <thead>
-        <tr>
-            <th width="30%">Info</th>
-            <th width="35%">POST</th>
-            <th width="35%">Headers</th>
-        </tr>
-    </thead>
-    <tbody>
-
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 
 <script type="text/javascript">
     // Load data into table rows
@@ -26,31 +33,51 @@
         addRow(item);
     });
 
+    // Update times
+    function updateTimes() {
+        $('time[datetime').each(function () {
+            var dateTime = $(this).attr('datetime');
+            $(this).html(moment(dateTime).fromNow());
+        })
+
+    }
+    setInterval(updateTimes, 1000);
+
+    // Add rows
     function addRow(data) {
 
-        data.info = JSON.stringify({
-            'method': data.method,
-            'ip': data.ip,
-            'time': data.time,
-            'referer': data.referer,
-            'body': data.body
-        });
+        var date = new Date(parseInt((data.time + '').slice(0, -6)));
 
-        var row = $('<tr><td>' + data.info + '</td><td>' + data.post + '</td><td>' + data.headers + '</td></tr>');
-        $('table tbody').prepend(row);
-        
+        var $info = $(
+            '<div>' +
+            '<p><strong>Method: </strong>' + data.method + '</p>' +
+            '<p><strong>IP Address: </strong>' + data.ip + '</p>' +
+            '<p><strong>Time: </strong><time datetime="' + date.toISOString() + '"></time></p>' +
+            '<p><strong>Referer: </strong>' + data.referer + '</p>' +
+            // '<p><strong>Size: </strong>' + data.size + '</p>' +
+            '<p><strong>Body: </strong>' + data.body + '</p>' +
+            '</div>'
+        );
+
+        var $row = $('<tr>' +
+            '<td>' + $info.prop('outerHTML') + '</td>' +
+            '<td><div class="json">' + JSON.stringify(JSON.parse(data.post), null, 2) + '</div></td>' +
+            '<td><div class="json">' + JSON.stringify(JSON.parse(data.headers), null, 2) + '</div></td>' +
+            '</tr>');
+        $('table tbody').prepend($row);
+
+        updateTimes();
     }
 
     // Clicking the endpoint URL
-    $("#input")
-        .on('click', function () {
-            this.select();
-            document.execCommand("copy");
-            Push.create('Copied to clipboard!');
-            $(this).parent().addClass("has-success");
-        }).on('blur', function () {
-            $(this).parent().removeClass("has-success");
-        });
+    $("#green-button, #input").on('click', function () {
+        $('#input').select();
+        document.execCommand("copy");
+        Push.create('Copied to clipboard!');
+        $('#input').parent().addClass("has-success");
+    }).on('blur', function () {
+        $('#input').parent().removeClass("has-success");
+    });
 
     // Handle WebSockets
     if (window.WebSocket === undefined) {
