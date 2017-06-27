@@ -1,4 +1,4 @@
 delete old websocket connections
 delete requests that havent been updated in a while
 remember last few urls with javascript and link in header
-add decimal for time and add formatted time
+show if socket has error so user can click refresh
