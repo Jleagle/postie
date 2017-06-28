@@ -2,3 +2,5 @@ delete old websocket connections
 delete requests that havent been updated in a while
 remember last few urls with javascript and link in header
 show if socket has error so user can click refresh
+format the json so its one line per key - if value is array with one element, convert to string?
+do favicon

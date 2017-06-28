@@ -1,7 +1,7 @@
 {{define "requests"}} {{ template "header" }}
 
 <div class="container">
-    <div class="input-group input-group-lg" style="margin-bottom:20px;">
+    <div class="input-group" style="margin-bottom:20px;">
         <span class="input-group-btn" id="green-button">
             <span class="btn btn-success">Endpoint URL:</span>
         </span>
@@ -13,7 +13,7 @@
 </div>
 
 <div class="container-fluid">
-    <table class="table table-hover table-condensed table-responsive" id="requests">
+    <table class="table table-condensedx table-bordered" id="requests">
         <thead>
             <tr>
                 <th>Info</th>
@@ -28,6 +28,9 @@
 </div>
 
 <script type="text/javascript">
+
+    $('table#requests').floatThead();
+
     // Load data into table rows
     $.each(JSON.parse('{{.Requests}}'), function (index, item) {
         addRow(item);
@@ -41,7 +44,7 @@
         })
 
     }
-    setInterval(updateTimes, 1000);
+    setInterval(updateTimes, 5000);
 
     // Add rows
     function addRow(data) {
