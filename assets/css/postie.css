@@ -1,4 +1,12 @@
-table#requests div.json{
+table.table{
+  background-color: #222222;
+}
+
+table#requests td div{
+  word-break: break-all;
+}
+
+table#requests td div.json{
   font-size: 13px;
   font-family: 'Inconsolata', monospace;
   white-space: pre;
