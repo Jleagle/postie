@@ -2,11 +2,11 @@ table.table{
   background-color: #222222;
 }
 
-table#requests td div{
+table.table td{
   word-break: break-all;
 }
 
-table#requests td div.json{
+table.table td.json{
   font-size: 13px;
   font-family: 'Inconsolata', monospace;
   white-space: pre;

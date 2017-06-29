@@ -13,7 +13,7 @@
 </div>
 
 <div class="container-fluid">
-    <table class="table table-condensedx table-bordered" id="requests">
+    <table class="table table-condensed table-bordered">
         <thead>
             <tr>
                 <th>Info</th>
@@ -28,8 +28,12 @@
 </div>
 
 <script type="text/javascript">
+    function nanoToMilli(time) {
+        return parseInt((time + '').slice(0, -6));
+    }
 
-    $('table#requests').floatThead();
+    // Float the table header
+    $('table.table').floatThead();
 
     // Load data into table rows
     $.each(JSON.parse('{{.Requests}}'), function (index, item) {
@@ -48,24 +52,23 @@
 
     // Add rows
     function addRow(data) {
-
-        var date = new Date(parseInt((data.time + '').slice(0, -6)));
+        var date = new Date(nanoToMilli(data.time));
 
         var $info = $(
-            '<div>' +
+            '<td>' +
             '<p><strong>Method: </strong>' + data.method + '</p>' +
             '<p><strong>IP Address: </strong>' + data.ip + '</p>' +
             '<p><strong>Time: </strong><time datetime="' + date.toISOString() + '"></time></p>' +
             '<p><strong>Referer: </strong>' + data.referer + '</p>' +
             // '<p><strong>Size: </strong>' + data.size + '</p>' +
             '<p><strong>Body: </strong>' + data.body + '</p>' +
-            '</div>'
+            '</td>'
         );
 
         var $row = $('<tr>' +
-            '<td>' + $info.prop('outerHTML') + '</td>' +
-            '<td><div class="json">' + JSON.stringify(JSON.parse(data.post), null, 2) + '</div></td>' +
-            '<td><div class="json">' + JSON.stringify(JSON.parse(data.headers), null, 2) + '</div></td>' +
+            $info.prop('outerHTML') +
+            '<td class="json">' + JSON.stringify(JSON.parse(data.post), null, 2) + '</td>' +
+            '<td class="json">' + JSON.stringify(JSON.parse(data.headers), null, 2) + '</td>' +
             '</tr>');
         $('table tbody').prepend($row);
 
@@ -97,12 +100,28 @@
         }
         socket.onmessage = function (e) {
             console.log('WebSocket recieved');
-            Push.create('New request')
-            addRow(JSON.parse(e.data));
+            var data = JSON.parse(e.data);
+            noti('New request @ ' + nanoToMilli(data.time));
+            addRow(data);
         }
         socket.onerror = function (e) {
             console.log('WebSocket error: ' + e.data);
         }
+    }
+
+    // Notifications
+    function noti(message) {
+        return Push.create(
+            'Postie',
+            {
+                tag: message,
+                body: message,
+                icon: {
+                    x16: '/assets/img/postie_16.png',
+                    x32: '/assets/img/postie_32.png'
+                },
+                timeout: 5000
+            });
     }
 
 </script>
