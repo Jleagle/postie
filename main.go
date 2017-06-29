@@ -23,6 +23,7 @@ func main() {
 	r.Get("/info", infoRoute)
 	r.Get("/new", newRoute)
 	r.Get("/send", sendRoute)
+	r.Post("/send", postSendRoute)
 	r.Get("/{url}/list", requestsRoute)
 	r.Get("/{url}/ws", webSocketRoute)
 	r.Get("/{url}/clear", clearRoute)
