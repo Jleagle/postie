@@ -59,7 +59,12 @@ func fileServer(r chi.Router, path string, root http.FileSystem) {
 
 func connectToSQL() (*sql.DB, error) {
 
-	db, err := sql.Open("mysql", "root@tcp(127.0.0.1:3306)/postie")
+	password := os.Getenv("SQL_PW")
+	if len(password) > 0 {
+		password = ":" + password
+	}
+
+	db, err := sql.Open("mysql", "root"+password+"@tcp(127.0.0.1:3306)/postie")
 	if err != nil {
 		panic(err.Error())
 	}
