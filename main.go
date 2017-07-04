@@ -2,9 +2,12 @@ package main
 
 import (
 	"database/sql"
+	"html/template"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"encoding/json"
@@ -65,6 +68,28 @@ func connectToSQL() (*sql.DB, error) {
 	}
 
 	return db, err
+}
+
+func returnTemplate(w http.ResponseWriter, page string, pageData interface{}) {
+
+	// Get current app path
+	_, file, _, ok := runtime.Caller(0)
+	if !ok {
+		panic("No caller information")
+	}
+	folder := path.Dir(file)
+
+	// Load templates needed
+	t, err := template.ParseFiles(folder+"/templates/header.html", folder+"/templates/footer.html", folder+"/templates/"+page+".html")
+	if err != nil {
+		panic(err)
+	}
+
+	// Write a respone
+	err = t.ExecuteTemplate(w, page, nil)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // request is the database row

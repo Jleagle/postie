@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 
 	"encoding/json"
@@ -45,11 +44,6 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 		results = append(results, request)
 	}
 
-	t, err := template.ParseFiles("templates/header.html", "templates/footer.html", "templates/requests.html")
-	if err != nil {
-		panic(err)
-	}
-
 	resultsByteArray, err := json.Marshal(results)
 
 	vars := requestTemplateVars{}
@@ -57,10 +51,7 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 	vars.Domain = r.Host
 	vars.URL = url
 
-	err = t.ExecuteTemplate(w, "requests", vars)
-	if err != nil {
-		panic(err)
-	}
+	returnTemplate(w, "requests", vars)
 }
 
 func clearRoute(w http.ResponseWriter, r *http.Request) {

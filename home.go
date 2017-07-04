@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 
 	"github.com/elgs/gostrgen"
@@ -10,29 +9,11 @@ import (
 )
 
 func homeRoute(w http.ResponseWriter, r *http.Request) {
-
-	t, err := template.ParseFiles("templates/header.html", "templates/footer.html", "templates/home.html")
-	if err != nil {
-		panic(err)
-	}
-
-	err = t.ExecuteTemplate(w, "home", nil)
-	if err != nil {
-		panic(err)
-	}
+	returnTemplate(w, "home", nil)
 }
 
 func infoRoute(w http.ResponseWriter, r *http.Request) {
-
-	t, err := template.ParseFiles("templates/header.html", "templates/footer.html", "templates/info.html")
-	if err != nil {
-		panic(err)
-	}
-
-	err = t.ExecuteTemplate(w, "info", nil)
-	if err != nil {
-		panic(err)
-	}
+	returnTemplate(w, "info", nil)
 }
 
 func newRoute(w http.ResponseWriter, r *http.Request) {

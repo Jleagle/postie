@@ -2,23 +2,13 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 
 	curl "github.com/andelf/go-curl"
 )
 
 func sendRoute(w http.ResponseWriter, r *http.Request) {
-
-	t, err := template.ParseFiles("templates/header.html", "templates/footer.html", "templates/send.html")
-	if err != nil {
-		panic(err)
-	}
-
-	err = t.ExecuteTemplate(w, "send", nil)
-	if err != nil {
-		panic(err)
-	}
+	returnTemplate(w, "send", nil)
 }
 
 func postSendRoute(w http.ResponseWriter, r *http.Request) {
