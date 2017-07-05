@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"html/template"
 	"net/http"
 	"os"
@@ -9,8 +10,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-
-	"encoding/json"
 
 	"github.com/go-chi/chi"
 	"github.com/gorilla/websocket"
@@ -91,7 +90,7 @@ func returnTemplate(w http.ResponseWriter, page string, pageData interface{}) {
 	}
 
 	// Write a respone
-	err = t.ExecuteTemplate(w, page, nil)
+	err = t.ExecuteTemplate(w, page, pageData)
 	if err != nil {
 		panic(err)
 	}
