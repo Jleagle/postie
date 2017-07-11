@@ -36,8 +36,8 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 		request.Time = time
 		request.Method = method
 		request.IP = ip
-		request.Post = post
-		request.Headers = headers
+		request.Post = removeSingleArrays(post)
+		request.Headers = removeSingleArrays(headers)
 		request.Body = body
 		request.Referer = referer
 
@@ -75,4 +75,39 @@ type requestTemplateVars struct {
 	Requests string
 	Domain   string
 	URL      string
+}
+
+func removeSingleArrays(x string) string {
+
+	var data map[string]interface{}
+	// var data2 map[string]
+	// todo, make a new array
+
+	bytes := []byte(x)
+	if err := json.Unmarshal(bytes, &data); err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%v", data)
+
+	for k, v := range data {
+		if len(v.([]interface{})) == 1 {
+			for _, vv := range v.([]interface{}) {
+				data[k] = vv
+			}
+		}
+	}
+
+	bytes, error := json.Marshal(data)
+	if error != nil {
+		panic(error)
+	}
+
+	return string(bytes)
+}
+
+type headers interface {
+}
+
+type header struct {
 }
