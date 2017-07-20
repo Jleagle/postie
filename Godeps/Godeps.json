@@ -4,6 +4,11 @@
 	"GodepVersion": "v79",
 	"Deps": [
 		{
+			"ImportPath": "github.com/andelf/go-curl",
+			"Comment": "compatible-with-go-release.r60-83-gf8b334d",
+			"Rev": "f8b334df3789fbdf98df3b3b22815e958b956c19"
+		},
+		{
 			"ImportPath": "github.com/elgs/gostrgen",
 			"Rev": "9d61ae07eeaeb54ce2100022b1fd3ea020093d09"
 		},
