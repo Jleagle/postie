@@ -7,3 +7,4 @@
 - link send page to recieve page
 - put vendor assets in right folder
 - move inline js into files
+- fix removing single arrays

@@ -48,7 +48,6 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 
 	vars := requestTemplateVars{}
 	vars.Requests = string(resultsByteArray)
-	vars.Domain = r.Host
 	vars.URL = url
 
 	returnTemplate(w, "requests", vars)
@@ -73,7 +72,6 @@ func clearRoute(w http.ResponseWriter, r *http.Request) {
 
 type requestTemplateVars struct {
 	Requests string
-	Domain   string
 	URL      string
 }
 
