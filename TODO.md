@@ -3,8 +3,5 @@
 - show if socket has error so user can click refresh
 - format the json so its one line per key - if value is array
 - with one element, convert to string?
-- do favicon
 - link send page to recieve page
-- put vendor assets in right folder
 - move inline js into files
-- fix removing single arrays
