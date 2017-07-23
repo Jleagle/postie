@@ -5,7 +5,7 @@
         <span class="input-group-btn" id="green-button">
             <span class="btn btn-success">Endpoint URL:</span>
         </span>
-        <input type="text" class="form-control" value="http://{{.Domain}}/{{.URL}}" id="input">
+        <input type="text" class="form-control" value="https://postie.pro/{{.URL}}" id="input">
         <span class="input-group-btn">
             <a href="/{{.URL}}/clear" class="btn btn-danger" role="button">Clear Requests</a>
         </span>
@@ -90,7 +90,7 @@
         console.log('Your browser does not support WebSockets');
     } else {
         var pathArray = window.location.pathname.split('/');
-        var socket = new WebSocket("ws://" + location.host + "/" + pathArray[1] + "/ws");
+        var socket = new WebSocket("wss://" + location.host + "/" + pathArray[1] + "/ws");
 
         socket.onopen = function (e) {
             console.log('WebSocket opened');
