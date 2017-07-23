@@ -37,7 +37,7 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 	request.Time = time.Now().UnixNano()
 	request.URL = url
 	request.Method = r.Method
-	request.IP = r.RemoteAddr
+	request.IP = r.Header.Get("X-Forwarded-For")
 	request.Post = string(form)
 	request.Headers = string(headers)
 	request.Body = string(body)
