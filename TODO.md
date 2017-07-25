@@ -3,3 +3,4 @@
 - show if socket has error so user can click refresh
 - link send page to recieve page
 - move inline js into files
+- stop websockets expiring after a minute

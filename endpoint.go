@@ -66,11 +66,6 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 
 func webSocketRoute(w http.ResponseWriter, r *http.Request) {
 
-	// Validation
-	if r.Header.Get("Origin") != "http://"+r.Host {
-		http.Error(w, "Origin not allowed", 403)
-	}
-
 	// Initialized slice
 	if webSockets == nil {
 		webSockets = []webSocket{}
