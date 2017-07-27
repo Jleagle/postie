@@ -5,9 +5,9 @@
         <span class="input-group-btn" id="green-button">
             <span class="btn btn-success">Endpoint URL:</span>
         </span>
-        <input type="text" class="form-control" value="https://postie.pro/{{.URL}}" id="input">
+        <input type="text" class="form-control" value="{{.Domain}}/{{.URL}}" id="input">
         <span class="input-group-btn">
-            <a href="/{{.URL}}/clear" class="btn btn-danger" role="button">Clear Requests</a>
+            <a href="/{{.URL}}/clear" class="btn btn-warning" role="button">Clear Requests</a>
         </span>
     </div>
 </div>
@@ -26,6 +26,8 @@
         </tbody>
     </table>
 </div>
+
+<button type="button" class="btn btn-danger" id="status" onClick="window.location.reload()">Live</button>
 
 <script type="text/javascript">
     function nanoToMilli(time) {
@@ -90,22 +92,35 @@
         console.log('Your browser does not support WebSockets');
     } else {
         var pathArray = window.location.pathname.split('/');
-        var socket = new WebSocket("wss://" + location.host + "/" + pathArray[1] + "/ws");
+        var socket = new WebSocket("{{.Protocol}}://" + location.host + "/" + pathArray[1] + "/ws");
 
         socket.onopen = function (e) {
             console.log('WebSocket opened');
+
+            $('#status')
+                .addClass('btn-success')
+                .removeClass('btn-danger');
         };
         socket.onclose = function (e) {
             console.log('WebSocket closed');
+
+            $('#status')
+                .addClass('btn-danger')
+                .removeClass('btn-success');
         }
         socket.onmessage = function (e) {
             console.log('WebSocket recieved');
+
             var data = JSON.parse(e.data);
             noti('New request @ ' + nanoToMilli(data.time));
             addRow(data);
         }
         socket.onerror = function (e) {
             console.log('WebSocket error: ' + e.data);
+
+            $('#status')
+                .addClass('btn-danger')
+                .removeClass('btn-success');
         }
     }
 

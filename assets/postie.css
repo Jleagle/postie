@@ -23,3 +23,9 @@ table.table td.json{
 .btn-success{
   color: black;
 }
+
+#status{
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+}

@@ -48,6 +48,13 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 
 	vars := requestTemplateVars{}
 	vars.Requests = string(resultsByteArray)
+	if r.Header.Get("X-Forwarded-Proto") == "https" {
+		vars.Protocol = "wss"
+		vars.Domain = "https://postie.pro"
+	} else {
+		vars.Protocol = "ws"
+		vars.Domain = "http://localhost:8081"
+	}
 	vars.URL = url
 
 	returnTemplate(w, "requests", vars)
@@ -72,6 +79,8 @@ func clearRoute(w http.ResponseWriter, r *http.Request) {
 
 type requestTemplateVars struct {
 	Requests string
+	Protocol string
+	Domain   string
 	URL      string
 }
 
