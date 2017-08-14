@@ -69,8 +69,8 @@
 
         var $row = $('<tr>' +
             $info.prop('outerHTML') +
-            '<td class="json">' + JSON.stringify(JSON.parse(data.post), null, 2) + '</td>' +
-            '<td class="json">' + JSON.stringify(JSON.parse(data.headers), null, 2) + '</td>' +
+            '<td class="json">' + tidyJson(data.post) + '</td>' +
+            '<td class="json">' + tidyJson(data.headers) + '</td>' +
             '</tr>');
         $('table tbody').prepend($row);
 
@@ -137,6 +137,21 @@
                 },
                 timeout: 5000
             });
+    }
+
+    // Json tidy
+    function tidyJson(json) {
+        array = JSON.parse(json);
+        for (var key in array) {
+            var value = array[key];
+            if (typeof value === 'object' || typeof value === 'array') {
+                var len = Object.keys(value).length;
+                if (len < 2) {
+                    array[key] = value[Object.keys(value)[0]];
+                }
+            }
+        }
+        return JSON.stringify(array, null, 2);
     }
 
 </script>
