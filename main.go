@@ -11,13 +11,19 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/Jleagle/go-helpers/rollbar"
 	"github.com/go-chi/chi"
 	"github.com/gorilla/websocket"
+	roll "github.com/stvp/rollbar"
 )
 
 var webSockets []webSocket
 
 func main() {
+
+	roll.Token = os.Getenv("POSTIE_ROLLBAR_PRIVATE")
+	roll.Environment = os.Getenv("ENV")
+	defer roll.Wait()
 
 	r := chi.NewRouter()
 
@@ -43,7 +49,7 @@ func main() {
 func fileServer(r chi.Router, path string, root http.FileSystem) {
 
 	if strings.ContainsAny(path, "{}*") {
-		panic("FileServer does not permit URL parameters.")
+		rollbar.MessageWarning("FileServer does not permit URL parameters.")
 	}
 
 	fs := http.StripPrefix(path, http.FileServer(root))
@@ -68,7 +74,7 @@ func connectToSQL() (*sql.DB, error) {
 
 	db, err := sql.Open("mysql", "root"+password+"@tcp(127.0.0.1:3306)/postie")
 	if err != nil {
-		panic(err.Error())
+		rollbar.ErrorCritical(err)
 	}
 
 	return db, err
@@ -79,20 +85,20 @@ func returnTemplate(w http.ResponseWriter, page string, pageData interface{}) {
 	// Get current app path
 	_, file, _, ok := runtime.Caller(0)
 	if !ok {
-		panic("No caller information")
+		rollbar.MessageWarning("No caller information")
 	}
 	folder := path.Dir(file)
 
 	// Load templates needed
 	t, err := template.ParseFiles(folder+"/templates/header.html", folder+"/templates/footer.html", folder+"/templates/"+page+".html")
 	if err != nil {
-		panic(err)
+		rollbar.ErrorCritical(err)
 	}
 
 	// Write a respone
 	err = t.ExecuteTemplate(w, page, pageData)
 	if err != nil {
-		panic(err)
+		rollbar.ErrorCritical(err)
 	}
 }
 

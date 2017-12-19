@@ -1,11 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 
-	"encoding/json"
-
+	"github.com/Jleagle/go-helpers/rollbar"
 	"github.com/go-chi/chi"
 )
 
@@ -13,16 +12,20 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 
 	url := chi.URLParam(r, "url")
 
-	db, _ := connectToSQL()
+	db, err := connectToSQL()
+	if err != nil {
+		rollbar.ErrorCritical(err)
+	}
+
 	defer db.Close()
 
 	rows, err := db.Query("SELECT * FROM requests WHERE url = ? ORDER BY time ASC", url)
 	if err != nil {
-		fmt.Println(err)
+		rollbar.ErrorCritical(err)
 	}
 	defer db.Close()
 
-	results := []request{}
+	var results []request
 	request := request{}
 
 	// Make an array of requests for the template
@@ -30,7 +33,10 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 		var time int64
 		var url, method, ip, post, headers, body, referer string
 
-		rows.Scan(&url, &time, &method, &ip, &post, &headers, &body, &referer)
+		err = rows.Scan(&url, &time, &method, &ip, &post, &headers, &body, &referer)
+		if err != nil {
+			rollbar.ErrorCritical(err)
+		}
 
 		request.URL = url
 		request.Time = time
@@ -64,12 +70,16 @@ func clearRoute(w http.ResponseWriter, r *http.Request) {
 
 	url := chi.URLParam(r, "url")
 
-	db, _ := connectToSQL()
+	db, err := connectToSQL()
+	if err != nil {
+		rollbar.ErrorCritical(err)
+	}
+
 	defer db.Close()
 
-	_, err := db.Query("DELETE FROM requests WHERE url = ?", url)
+	_, err = db.Query("DELETE FROM requests WHERE url = ?", url)
 	if err != nil {
-		fmt.Println(err)
+		rollbar.ErrorError(err)
 	}
 	defer db.Close()
 

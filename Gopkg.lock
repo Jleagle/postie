@@ -3,6 +3,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/Jleagle/go-helpers"
+  packages = ["rollbar"]
+  revision = "e6febc9b5aaa6f86f0e28be2c9c490c43c97bcc7"
+
+[[projects]]
+  branch = "master"
   name = "github.com/andelf/go-curl"
   packages = ["."]
   revision = "f8b334df3789fbdf98df3b3b22815e958b956c19"
@@ -16,13 +22,14 @@
 [[projects]]
   name = "github.com/go-chi/chi"
   packages = ["."]
-  revision = "967844826e58cf31213a7dfb82455d242ad85101"
-  version = "v3.0.0"
+  revision = "687d2792aedd8e8ac3bbd8592cf55b91d7ea8ce9"
+  version = "v3.3.1"
 
 [[projects]]
   name = "github.com/go-sql-driver/mysql"
   packages = ["."]
-  revision = "8fefef06da7707b5a3cda42195a6b409c9c9ab5c"
+  revision = "a0583e0143b1624142adab07e0e97fe106d99561"
+  version = "v1.3"
 
 [[projects]]
   name = "github.com/gorilla/websocket"
@@ -30,9 +37,15 @@
   revision = "ea4d1f681babbce9545c9c5f3d5194a789c89f5b"
   version = "v1.2.0"
 
+[[projects]]
+  name = "github.com/stvp/rollbar"
+  packages = ["."]
+  revision = "b20261800d8cda3be14dcef0d1a8320779bba61a"
+  version = "v0.5.1"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "645162cb4bc4f2c9c09ff80d8bebd73c8bd4a02d7f5951172fb92f7ead7b9b21"
+  inputs-digest = "f849386b4f1a52b7b22ab5d42c495795cb62411b76bc8b6ca5ab7144e2692c7f"
   solver-name = "gps-cdcl"
   solver-version = 1

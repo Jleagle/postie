@@ -2,12 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"regexp"
 	"time"
 
+	"github.com/Jleagle/go-helpers/rollbar"
 	"github.com/go-chi/chi"
 	"github.com/gorilla/websocket"
 )
@@ -16,7 +16,10 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 
 	url := chi.URLParam(r, "url")
 
-	match, _ := regexp.MatchString("^[A-Z0-9]{10}$", url)
+	match, err := regexp.MatchString("^[A-Z0-9]{10}$", url)
+	if err != nil {
+		rollbar.ErrorCritical(err)
+	}
 	if !match {
 		http.NotFound(w, r)
 		return
@@ -25,12 +28,27 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
 	// Gather data
-	headers, _ := json.Marshal(r.Header)
-	body, _ := ioutil.ReadAll(r.Body)
-	form, _ := json.Marshal(r.Form)
+	headers, err := json.Marshal(r.Header)
+	if err != nil {
+		rollbar.ErrorCritical(err)
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		rollbar.ErrorCritical(err)
+	}
+
+	form, err := json.Marshal(r.Form)
+	if err != nil {
+		rollbar.ErrorCritical(err)
+	}
 
 	// Save request to MySQL
-	db, _ := connectToSQL()
+	db, err := connectToSQL()
+	if err != nil {
+		rollbar.ErrorCritical(err)
+	}
+
 	defer db.Close()
 
 	request := request{}
@@ -47,7 +65,7 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 		request.Time, request.URL, request.Method, request.IP, request.Post, request.Headers, request.Body, request.Referer)
 
 	if queryError != nil {
-		fmt.Println(queryError)
+		rollbar.ErrorCritical(err)
 	}
 
 	// Check if there are websockets to send to
@@ -55,7 +73,7 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 		if webSocket.key == url {
 			err := webSocket.connection.WriteJSON(request)
 			if err != nil {
-				fmt.Println(err)
+				rollbar.ErrorCritical(err)
 			}
 		}
 	}
@@ -74,8 +92,8 @@ func webSocketRoute(w http.ResponseWriter, r *http.Request) {
 	// Make a connection
 	conn, err := websocket.Upgrade(w, r, w.Header(), 1024, 1024)
 	if err != nil {
+		rollbar.ErrorCritical(err)
 		http.Error(w, "Could not open websocket connection", http.StatusBadRequest)
-		fmt.Printf("%s\n", err.Error())
 	}
 
 	// Save the connection

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
+	"github.com/Jleagle/go-helpers/rollbar"
 	"github.com/andelf/go-curl"
 )
 
@@ -30,7 +30,6 @@ func postSendRoute(w http.ResponseWriter, r *http.Request) {
 	easy.Setopt(curl.OPT_WRITEFUNCTION, fooTest)
 
 	if err := easy.Perform(); err != nil {
-		fmt.Printf("ERROR: %v\n", err)
+		rollbar.MessageDebug("ERROR: %v\n" + err.Error())
 	}
-
 }
