@@ -15,11 +15,11 @@
 <div class="container-fluid">
     <table class="table table-condensed table-bordered">
         <thead>
-            <tr>
-                <th>Info</th>
-                <th>POST</th>
-                <th>Headers</th>
-            </tr>
+        <tr>
+            <th>Info</th>
+            <th>POST</th>
+            <th>Headers</th>
+        </tr>
         </thead>
         <tbody>
 
@@ -50,6 +50,7 @@
         })
 
     }
+
     setInterval(updateTimes, 5000);
 
     // Add rows
@@ -57,21 +58,21 @@
         var date = new Date(nanoToMilli(data.time));
 
         var $info = $(
-            '<td>' +
-            '<p><strong>Method: </strong>' + data.method + '</p>' +
-            '<p><strong>IP Address: </strong>' + data.ip + '</p>' +
-            '<p><strong>Time: </strong><time datetime="' + date.toISOString() + '"></time></p>' +
-            '<p><strong>Referer: </strong>' + data.referer + '</p>' +
-            // '<p><strong>Size: </strong>' + data.size + '</p>' +
-            '<p><strong>Body: </strong>' + data.body + '</p>' +
-            '</td>'
+                '<td>' +
+                '<p><strong>Method: </strong>' + data.method + '</p>' +
+                '<p><strong>IP Address: </strong>' + data.ip + '</p>' +
+                '<p><strong>Time: </strong><time datetime="' + date.toISOString() + '"></time></p>' +
+                '<p><strong>Referer: </strong>' + data.referer + '</p>' +
+                // '<p><strong>Size: </strong>' + data.size + '</p>' +
+                '<p><strong>Body: </strong>' + data.body + '</p>' +
+                '</td>'
         );
 
         var $row = $('<tr>' +
-            $info.prop('outerHTML') +
-            '<td class="json">' + tidyJson(data.post) + '</td>' +
-            '<td class="json">' + tidyJson(data.headers) + '</td>' +
-            '</tr>');
+                $info.prop('outerHTML') +
+                '<td class="json">' + tidyJson(data.post) + '</td>' +
+                '<td class="json">' + tidyJson(data.headers) + '</td>' +
+                '</tr>');
         $('table tbody').prepend($row);
 
         updateTimes();
@@ -98,15 +99,15 @@
             console.log('WebSocket opened');
 
             $('#status')
-                .addClass('btn-success')
-                .removeClass('btn-danger');
+                    .addClass('btn-success')
+                    .removeClass('btn-danger');
         };
         socket.onclose = function (e) {
             console.log('WebSocket closed');
 
             $('#status')
-                .addClass('btn-danger')
-                .removeClass('btn-success');
+                    .addClass('btn-danger')
+                    .removeClass('btn-success');
         }
         socket.onmessage = function (e) {
             console.log('WebSocket recieved');
@@ -119,24 +120,24 @@
             console.log('WebSocket error: ' + e.data);
 
             $('#status')
-                .addClass('btn-danger')
-                .removeClass('btn-success');
+                    .addClass('btn-danger')
+                    .removeClass('btn-success');
         }
     }
 
     // Notifications
     function noti(message) {
         return Push.create(
-            'Postie',
-            {
-                tag: message,
-                body: message,
-                icon: {
-                    x16: '/assets/img/postie_16.png',
-                    x32: '/assets/img/postie_32.png'
-                },
-                timeout: 5000
-            });
+                'Postie',
+                {
+                    tag: message,
+                    body: message,
+                    icon: {
+                        x16: '/assets/img/postie_16.png',
+                        x32: '/assets/img/postie_32.png'
+                    },
+                    timeout: 5000
+                });
     }
 
     // Json tidy

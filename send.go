@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	curl "github.com/andelf/go-curl"
+	"github.com/andelf/go-curl"
 )
 
 func sendRoute(w http.ResponseWriter, r *http.Request) {

@@ -1,140 +1,141 @@
 {{define "send"}} {{ template "header" }}
 
 <div class="container">
-  <h1>Send Post</h1>
-  <p>Send cURL request</p>
+    <h1>Send Post</h1>
+    <p>Send cURL request</p>
 
-  <form>
-    <!-- Method & URL-->
-    <div class="form-group">
-      <label for="url">URL</label>
+    <form>
+        <!-- Method & URL-->
+        <div class="form-group">
+            <label for="url">URL</label>
 
-      <div class="row">
-        <div class="col-xs-3">
-          <select class="form-control" name="method">
-            <option value="GET">GET</option><option value="POST">POST</option>
-            <option value="PUT">PUT</option>
-            <option value="PATCH">PATCH</option>
-            <option value="HEAD">HEAD</option>
-            <option value="OPTIONS">OPTIONS</option>
-            <option value="DELETE">DELETE</option>
-          </select>
+            <div class="row">
+                <div class="col-xs-3">
+                    <select class="form-control" name="method">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="PATCH">PATCH</option>
+                        <option value="HEAD">HEAD</option>
+                        <option value="OPTIONS">OPTIONS</option>
+                        <option value="DELETE">DELETE</option>
+                    </select>
+                </div>
+                <div class="col-xs-7">
+                    <input type="url" class="form-control" id="url" placeholder="http://google.com">
+                </div>
+            </div>
         </div>
-        <div class="col-xs-7">
-          <input type="url" class="form-control" id="url" placeholder="http://google.com">
+
+        <!-- Headers -->
+        <div class="form-group">
+            <label for="exampleInputPassword1">Headers</label>
+
+            <div class="bottom-margin">
+                <button type="button" class="btn btn-default new-row">Add Option</button>
+            </div>
+
+            <div class="row new-row bottom-margin">
+                <div class="col-xs-3">
+                    <input type="text" class="form-control" placeholder="Name" name="headerKey[]">
+                </div>
+                <div class="col-xs-7">
+                    <input type="text" class="form-control" placeholder="Value" name="headerVal[]">
+                </div>
+                <div class="col-xs-2">
+                    <button type="button" class="btn btn-danger remove-button pull-left">Remove</button>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Headers -->
-    <div class="form-group">
-      <label for="exampleInputPassword1">Headers</label>
+        <!-- POST Values -->
+        <div class="form-group">
+            <label for="exampleInputPassword1">POST</label>
 
-      <div class="bottom-margin">
-        <button type="button" class="btn btn-default new-row">Add Option</button>
-      </div>
+            <div class="bottom-margin">
+                <button type="button" class="btn btn-default new-row">Add Option</button>
+            </div>
 
-      <div class="row new-row bottom-margin">
-        <div class="col-xs-3">
-          <input type="text" class="form-control" placeholder="Name" name="headerKey[]">
+            <div class="row new-row bottom-margin">
+                <div class="col-xs-3">
+                    <input type="text" class="form-control" placeholder="Name" name="postKey[]">
+                </div>
+                <div class="col-xs-7">
+                    <input type="text" class="form-control" placeholder="Value" name="postVal[]">
+                </div>
+                <div class="col-xs-2">
+                    <button type="button" class="btn btn-danger remove-button pull-left">Remove</button>
+                </div>
+            </div>
         </div>
-        <div class="col-xs-7">
-          <input type="text" class="form-control" placeholder="Value" name="headerVal[]">
-        </div>
-        <div class="col-xs-2">
-          <button type="button" class="btn btn-danger remove-button pull-left">Remove</button>
-        </div>
-      </div>
-    </div>
 
-    <!-- POST Values -->
-    <div class="form-group">
-      <label for="exampleInputPassword1">POST</label>
+        <!-- cURL Options -->
+        <div class="form-group">
+            <label for="exampleInputPassword1">Options</label>
 
-      <div class="bottom-margin">
-        <button type="button" class="btn btn-default new-row">Add Option</button>
-      </div>
+            <div class="bottom-margin">
+                <button type="button" class="btn btn-default new-row" id="add-option">Add Option</button>
+            </div>
 
-      <div class="row new-row bottom-margin">
-        <div class="col-xs-3">
-          <input type="text" class="form-control" placeholder="Name" name="postKey[]">
+            <div class="row new-row bottom-margin">
+                <div class="col-xs-3">
+                    <select class="form-control">
+                        <option value="">Option</option>
+                        <option value="--connect-timeout">--connect-timeout</option>
+                        <option value="--cookie">--cookie (-b)</option>
+                        <option value="--data">--data (-d)</option>
+                        <option value="--header">--header (-H)</option>
+                        <option value="--head">--head (-I)</option>
+                        <option value="--location">--location (-L)</option>
+                        <option value="--max-redirs">--max-redirs</option>
+                        <option value="--max-time">--max-time (-m)</option>
+                        <option value="--proxy">--proxy (-x)</option>
+                        <option value="--proxy-user">--proxy-user (-U)</option>
+                        <option value="--request">--request (-X)</option>
+                        <option value="--url">--url</option>
+                        <option value="--user">--user (-u)</option>
+                        <option value="--user-agent">--user-agent (-A)</option>
+                    </select>
+                </div>
+                <div class="col-xs-7">
+                    <input type="text" class="form-control" placeholder="Value">
+                </div>
+                <div class="col-xs-2">
+                    <button type="button" class="btn btn-danger remove-button pull-left">Remove</button>
+                </div>
+            </div>
         </div>
-        <div class="col-xs-7">
-          <input type="text" class="form-control" placeholder="Value" name="postVal[]">
-        </div>
-        <div class="col-xs-2">
-          <button type="button" class="btn btn-danger remove-button pull-left">Remove</button>
-        </div>
-      </div>
-    </div>
 
-    <!-- cURL Options -->
-    <div class="form-group">
-      <label for="exampleInputPassword1">Options</label>
+        <button type="submit" class="btn btn-success" id="send">Post</button>
 
-      <div class="bottom-margin">
-        <button type="button" class="btn btn-default new-row" id="add-option">Add Option</button>
-      </div>
-
-      <div class="row new-row bottom-margin">
-        <div class="col-xs-3">
-          <select class="form-control">
-            <option value="">Option</option>
-            <option value="--connect-timeout">--connect-timeout</option>
-            <option value="--cookie">--cookie (-b)</option>
-            <option value="--data">--data (-d)</option>
-            <option value="--header">--header (-H)</option>
-            <option value="--head">--head (-I)</option>
-            <option value="--location">--location (-L)</option>
-            <option value="--max-redirs">--max-redirs</option>
-            <option value="--max-time">--max-time (-m)</option>
-            <option value="--proxy">--proxy (-x)</option>
-            <option value="--proxy-user">--proxy-user (-U)</option>
-            <option value="--request">--request (-X)</option>
-            <option value="--url">--url</option>
-            <option value="--user">--user (-u)</option>
-            <option value="--user-agent">--user-agent (-A)</option>
-          </select>
-        </div>
-        <div class="col-xs-7">
-          <input type="text" class="form-control" placeholder="Value">
-        </div>
-        <div class="col-xs-2">
-          <button type="button" class="btn btn-danger remove-button pull-left">Remove</button>
-        </div>
-      </div>
-    </div>
-
-    <button type="submit" class="btn btn-success" id="send">Post</button>
-
-  </form>
+    </form>
 
 </div>
 
 <script type="text/javascript">
-  // New row button
-  $('form').on('click', 'button.new-row', function (e) {
-    var $oldRow = $(this).parent().parent().find('div.new-row').first();
-    var $parent = $oldRow.parent();
-    $oldRow.clone().appendTo($parent).find(':input').val('');
-  });
+    // New row button
+    $('form').on('click', 'button.new-row', function (e) {
+        var $oldRow = $(this).parent().parent().find('div.new-row').first();
+        var $parent = $oldRow.parent();
+        $oldRow.clone().appendTo($parent).find(':input').val('');
+    });
 
-  // Remove row button
-  $('form').on('click', 'button.remove-button', function (e) {
-    var newRow = $(this).closest('div.new-row');
-    if ($(this).closest('div.form-group').find('div.new-row').length > 1) {
-      newRow.remove();
-    } else {
-      newRow.find(':input').val('');
-    }
-  });
+    // Remove row button
+    $('form').on('click', 'button.remove-button', function (e) {
+        var newRow = $(this).closest('div.new-row');
+        if ($(this).closest('div.form-group').find('div.new-row').length > 1) {
+            newRow.remove();
+        } else {
+            newRow.find(':input').val('');
+        }
+    });
 
-  // Submit form
-  $('#send').on('click', function (e) {
-    event.preventDefault();
-    var form = $('form').serializeArray();
-    console.log(form);
-  });
+    // Submit form
+    $('#send').on('click', function (e) {
+        event.preventDefault();
+        var form = $('form').serializeArray();
+        console.log(form);
+    });
 
 </script>
 
