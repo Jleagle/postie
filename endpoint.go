@@ -7,10 +7,13 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/Jleagle/go-helpers/rollbar"
 	"github.com/go-chi/chi"
 	"github.com/gorilla/websocket"
+	"strings"
+	"math/rand"
 )
+
+var webSockets map[string]map[int]*websocket.Conn
 
 func endpointRoute(w http.ResponseWriter, r *http.Request) {
 
@@ -18,7 +21,7 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 
 	match, err := regexp.MatchString("^[A-Z0-9]{10}$", url)
 	if err != nil {
-		rollbar.ErrorCritical(err)
+		Error(err)
 	}
 	if !match {
 		http.NotFound(w, r)
@@ -30,23 +33,23 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 	// Gather data
 	headers, err := json.Marshal(r.Header)
 	if err != nil {
-		rollbar.ErrorCritical(err)
+		Error(err)
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		rollbar.ErrorCritical(err)
+		Error(err)
 	}
 
 	form, err := json.Marshal(r.Form)
 	if err != nil {
-		rollbar.ErrorCritical(err)
+		Error(err)
 	}
 
 	// Save request to MySQL
 	db, err := connectToSQL()
 	if err != nil {
-		rollbar.ErrorCritical(err)
+		Error(err)
 	}
 
 	defer db.Close()
@@ -65,15 +68,24 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 		request.Time, request.URL, request.Method, request.IP, request.Post, request.Headers, request.Body, request.Referer)
 
 	if queryError != nil {
-		rollbar.ErrorCritical(err)
+		Error(err)
 	}
 
 	// Check if there are websockets to send to
-	for _, webSocket := range webSockets {
-		if webSocket.key == url {
-			err := webSocket.connection.WriteJSON(request)
+	val, ok := webSockets[url]
+	if ok {
+		for k, webSocket := range val {
+			err := webSocket.WriteJSON(request)
 			if err != nil {
-				rollbar.ErrorCritical(err)
+				if strings.Contains(err.Error(), "broken pipe") {
+					webSocket.Close()
+					delete(webSockets[url], k)
+					if len(webSockets[url]) < 1 {
+						delete(webSockets, url)
+					}
+				} else {
+					Error(err)
+				}
 			}
 		}
 	}
@@ -84,23 +96,25 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 
 func webSocketRoute(w http.ResponseWriter, r *http.Request) {
 
-	// Initialized slice
+	key := chi.URLParam(r, "url")
+	ran := rand.Int()
+
+	// Initialize maps
 	if webSockets == nil {
-		webSockets = []webSocket{}
+		webSockets = map[string]map[int]*websocket.Conn{}
+	}
+
+	_, ok := webSockets[key]
+	if !ok {
+		webSockets[key] = map[int]*websocket.Conn{}
 	}
 
 	// Make a connection
 	conn, err := websocket.Upgrade(w, r, w.Header(), 1024, 1024)
 	if err != nil {
-		rollbar.ErrorCritical(err)
+		Error(err)
 		http.Error(w, "Could not open websocket connection", http.StatusBadRequest)
 	}
 
-	// Save the connection
-	newSocket := webSocket{}
-	newSocket.connection = conn
-	newSocket.time = time.Now().Unix()
-	newSocket.key = chi.URLParam(r, "url")
-
-	webSockets = append(webSockets, newSocket)
+	webSockets[key][ran] = conn
 }

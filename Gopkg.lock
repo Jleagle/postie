@@ -3,15 +3,15 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/Jleagle/go-helpers"
-  packages = ["rollbar"]
-  revision = "e6febc9b5aaa6f86f0e28be2c9c490c43c97bcc7"
-
-[[projects]]
-  branch = "master"
   name = "github.com/andelf/go-curl"
   packages = ["."]
-  revision = "f8b334df3789fbdf98df3b3b22815e958b956c19"
+  revision = "9d81ad32de98e80df412c890c75d8964f696a910"
+
+[[projects]]
+  name = "github.com/dgrijalva/jwt-go"
+  packages = ["."]
+  revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
+  version = "v3.2.0"
 
 [[projects]]
   branch = "master"
@@ -20,10 +20,28 @@
   revision = "9d61ae07eeaeb54ce2100022b1fd3ea020093d09"
 
 [[projects]]
+  name = "github.com/fatih/color"
+  packages = ["."]
+  revision = "507f6050b8568533fb3f5504de8e5205fa62a114"
+  version = "v1.6.0"
+
+[[projects]]
+  name = "github.com/fsnotify/fsnotify"
+  packages = ["."]
+  revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
+  version = "v1.4.7"
+
+[[projects]]
   name = "github.com/go-chi/chi"
   packages = ["."]
-  revision = "687d2792aedd8e8ac3bbd8592cf55b91d7ea8ce9"
-  version = "v3.3.1"
+  revision = "e83ac2304db3c50cf03d96a2fcd39009d458bc35"
+  version = "v3.3.2"
+
+[[projects]]
+  name = "github.com/go-siris/siris"
+  packages = ["core/errors"]
+  revision = "d6bc3df4b216199bec985043ca6c3e5c00232fd5"
+  version = "v7.4.0"
 
 [[projects]]
   name = "github.com/go-sql-driver/mysql"
@@ -38,14 +56,125 @@
   version = "v1.2.0"
 
 [[projects]]
-  name = "github.com/stvp/rollbar"
+  name = "github.com/labstack/echo"
+  packages = [
+    ".",
+    "middleware"
+  ]
+  revision = "a5d81b8d4a627f3f49dcb3164ef2bb5239682227"
+  version = "3.3.4"
+
+[[projects]]
+  name = "github.com/labstack/gommon"
+  packages = [
+    "bytes",
+    "color",
+    "log",
+    "random"
+  ]
+  revision = "6fe1405d73ec4bd4cd8a4ac8e2a2b2bf95d03954"
+  version = "0.2.4"
+
+[[projects]]
+  name = "github.com/mattn/go-colorable"
   packages = ["."]
-  revision = "b20261800d8cda3be14dcef0d1a8320779bba61a"
-  version = "v0.5.1"
+  revision = "167de6bfdfba052fa6b2d3664c8f5272e23c9072"
+  version = "v0.0.9"
+
+[[projects]]
+  name = "github.com/mattn/go-isatty"
+  packages = ["."]
+  revision = "0360b2af4f38e8d38c7fce2a9f4e702702d73a39"
+  version = "v0.0.3"
+
+[[projects]]
+  name = "github.com/oxequa/realize"
+  packages = ["."]
+  revision = "9d7dd6d231b63a5aa133e98445d28c398d2802d3"
+  version = "v2.0.1"
+
+[[projects]]
+  name = "github.com/rollbar/rollbar-go"
+  packages = ["."]
+  revision = "aa40a4750d960d4173026078a04f2991b34d9442"
+  version = "v0.4.2"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/satori/go.uuid"
+  packages = ["."]
+  revision = "36e9d2ebbde5e3f13ab2e25625fd453271d6522e"
+
+[[projects]]
+  name = "github.com/sirupsen/logrus"
+  packages = ["."]
+  revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
+  version = "v1.0.5"
+
+[[projects]]
+  name = "github.com/tockins/interact"
+  packages = ["."]
+  revision = "f8fb5795b5d713c41dab6771ffe1fdfdfd0c3285"
+  version = "1.1.1"
+
+[[projects]]
+  name = "github.com/tockins/realize"
+  packages = ["realize"]
+  revision = "9d7dd6d231b63a5aa133e98445d28c398d2802d3"
+  version = "v2.0.1"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/valyala/bytebufferpool"
+  packages = ["."]
+  revision = "e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/valyala/fasttemplate"
+  packages = ["."]
+  revision = "dcecefd839c4193db0d35b88ec65b4c12d360ab0"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/crypto"
+  packages = [
+    "acme",
+    "acme/autocert",
+    "ssh/terminal"
+  ]
+  revision = "12892e8c234f4fe6f6803f052061de9057903bb2"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = ["websocket"]
+  revision = "b68f30494add4df6bd8ef5e82803f308e7f7c59c"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = [
+    "unix",
+    "windows"
+  ]
+  revision = "378d26f46672a356c46195c28f61bdb4c0a781dd"
+
+[[projects]]
+  branch = "v2"
+  name = "gopkg.in/urfave/cli.v2"
+  packages = ["."]
+  revision = "d3ae77c26ac8db90639677e4831a728d33c36111"
+
+[[projects]]
+  name = "gopkg.in/yaml.v2"
+  packages = ["."]
+  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
+  version = "v2.2.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f849386b4f1a52b7b22ab5d42c495795cb62411b76bc8b6ca5ab7144e2692c7f"
+  inputs-digest = "50a1658b9982f2ea15679ee929ece57876a564594bc1f7ecd78b2b66a6310939"
   solver-name = "gps-cdcl"
   solver-version = 1

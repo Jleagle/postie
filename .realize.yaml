@@ -1,0 +1,28 @@
+settings:
+  legacy:
+    force: false
+    interval: 0s
+server:
+  status: false
+  open: false
+  port: 5002
+  host: localhost
+schema:
+- name: Postie
+  path: .
+  commands:
+    install:
+      status: true
+    build:
+      status: false
+    run:
+      status: true
+  watcher:
+    paths:
+    - /
+    extensions:
+    - go
+    - yaml
+    ignored_paths:
+    - .git
+    - vendor

@@ -11,19 +11,16 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/Jleagle/go-helpers/rollbar"
 	"github.com/go-chi/chi"
-	"github.com/gorilla/websocket"
-	roll "github.com/stvp/rollbar"
+	"github.com/rollbar/rollbar-go"
 )
-
-var webSockets []webSocket
 
 func main() {
 
-	roll.Token = os.Getenv("POSTIE_ROLLBAR_PRIVATE")
-	roll.Environment = os.Getenv("ENV")
-	defer roll.Wait()
+	rollbar.SetToken(os.Getenv("POSTIE_ROLLBAR_PRIVATE"))
+	rollbar.SetEnvironment(os.Getenv("ENV"))           // defaults to "development"
+	rollbar.SetCodeVersion("dev-master")               // optional Git hash/branch/tag (required for GitHub integration)
+	rollbar.SetServerRoot("github.com/Jleagle/postie") // path of project (required for GitHub integration and non-project stacktrace collapsing)
 
 	r := chi.NewRouter()
 
@@ -49,7 +46,7 @@ func main() {
 func fileServer(r chi.Router, path string, root http.FileSystem) {
 
 	if strings.ContainsAny(path, "{}*") {
-		rollbar.MessageWarning("FileServer does not permit URL parameters.")
+		rollbar.Message(rollbar.ERR, "FileServer does not permit URL parameters.")
 	}
 
 	fs := http.StripPrefix(path, http.FileServer(root))
@@ -74,7 +71,7 @@ func connectToSQL() (*sql.DB, error) {
 
 	db, err := sql.Open("mysql", "root"+password+"@tcp(127.0.0.1:3306)/postie")
 	if err != nil {
-		rollbar.ErrorCritical(err)
+		Error(err)
 	}
 
 	return db, err
@@ -85,20 +82,20 @@ func returnTemplate(w http.ResponseWriter, page string, pageData interface{}) {
 	// Get current app path
 	_, file, _, ok := runtime.Caller(0)
 	if !ok {
-		rollbar.MessageWarning("No caller information")
+		rollbar.Message(rollbar.ERR, "No caller information")
 	}
 	folder := path.Dir(file)
 
 	// Load templates needed
 	t, err := template.ParseFiles(folder+"/templates/header.html", folder+"/templates/footer.html", folder+"/templates/"+page+".html")
 	if err != nil {
-		rollbar.ErrorCritical(err)
+		Error(err)
 	}
 
 	// Write a respone
 	err = t.ExecuteTemplate(w, page, pageData)
 	if err != nil {
-		rollbar.ErrorCritical(err)
+		Error(err)
 	}
 }
 
@@ -123,11 +120,4 @@ func (r request) GetInfo() string {
 type url struct {
 	id  int
 	url string
-}
-
-// webSocket is how we store websockets
-type webSocket struct {
-	key        string
-	time       int64
-	connection *websocket.Conn
 }

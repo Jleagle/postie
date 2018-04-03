@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 
-	"github.com/Jleagle/go-helpers/rollbar"
 	"github.com/elgs/gostrgen"
 	"github.com/go-sql-driver/mysql"
 )
@@ -20,7 +19,7 @@ func newRoute(w http.ResponseWriter, r *http.Request) {
 
 	db, err := connectToSQL()
 	if err != nil {
-		rollbar.ErrorCritical(err)
+		Error(err)
 	}
 
 	defer db.Close()
@@ -28,7 +27,7 @@ func newRoute(w http.ResponseWriter, r *http.Request) {
 	for {
 		randomString, err := gostrgen.RandGen(10, gostrgen.Upper|gostrgen.Digit, "", "")
 		if err != nil {
-			rollbar.ErrorCritical(err)
+			Error(err)
 		}
 
 		insert, err := db.Query("INSERT INTO urls (url) VALUES (?)", randomString)
@@ -43,6 +42,6 @@ func newRoute(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 		}
-		rollbar.ErrorCritical(err)
+		Error(err)
 	}
 }
