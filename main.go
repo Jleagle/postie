@@ -38,7 +38,7 @@ func main() {
 	filesDir := filepath.Join(workDir, "assets")
 	fileServer(r, "/assets", http.Dir(filesDir))
 
-	http.ListenAndServe(":8081", r)
+	http.ListenAndServe(":8080", r)
 }
 
 // FileServer conveniently sets up a http.FileServer handler to serve
