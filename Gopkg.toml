@@ -23,18 +23,12 @@
 required = ["github.com/oxequa/realize"]
 
 [[constraint]]
-  name = "github.com/andelf/go-curl"
-
-[[constraint]]
   branch = "master"
   name = "github.com/elgs/gostrgen"
 
 [[constraint]]
   name = "github.com/go-chi/chi"
   version = "3.0.0"
-
-[[constraint]]
-  name = "github.com/go-sql-driver/mysql"
 
 [[constraint]]
   name = "github.com/gorilla/websocket"
