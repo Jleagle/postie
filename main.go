@@ -75,7 +75,7 @@ func connectToSQL() (*sql.DB, error) {
 
 		db, err = sql.Open("mysql", "root"+password+"@tcp(127.0.0.1:3306)/postie")
 		if err != nil {
-			Error(err)
+			return db, err
 		}
 	}
 
