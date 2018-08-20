@@ -6,9 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"os"
-	"path"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"github.com/go-chi/chi"
@@ -86,15 +84,17 @@ func connectToSQL() (*sql.DB, error) {
 
 func returnTemplate(w http.ResponseWriter, page string, pageData interface{}) {
 
-	// Get current app path
-	_, file, _, ok := runtime.Caller(0)
-	if !ok {
-		rollbar.Message(rollbar.ERR, "No caller information")
-	}
-	folder := path.Dir(file)
-
 	// Load templates needed
-	t, err := template.ParseFiles(folder+"/templates/header.html", folder+"/templates/footer.html", folder+"/templates/"+page+".html")
+	folder := os.Getenv("POSTIE_PATH")
+	if folder == "" {
+		folder = "/root"
+	}
+
+	t, err := template.ParseFiles(
+		folder+"/templates/header.html",
+		folder+"/templates/footer.html",
+		folder+"/templates/"+page+".html",
+	)
 	if err != nil {
 		Error(err)
 	}
