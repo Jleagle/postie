@@ -13,14 +13,16 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 
 	db, err := connectToSQL()
 	if err != nil {
-		Error(err)
+		returnErrorTemplate(w, err)
+		return
 	}
 
 	defer db.Close()
 
 	rows, err := db.Query("SELECT * FROM requests WHERE url = ? ORDER BY time ASC", url)
 	if err != nil {
-		Error(err)
+		returnErrorTemplate(w, err)
+		return
 	}
 	defer db.Close()
 
@@ -34,7 +36,8 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 
 		err = rows.Scan(&url, &time, &method, &ip, &post, &headers, &body, &referer)
 		if err != nil {
-			Error(err)
+			returnErrorTemplate(w, err)
+			return
 		}
 
 		request.URL = url
@@ -71,14 +74,16 @@ func clearRoute(w http.ResponseWriter, r *http.Request) {
 
 	db, err := connectToSQL()
 	if err != nil {
-		Error(err)
+		returnErrorTemplate(w, err)
+		return
 	}
 
 	defer db.Close()
 
 	_, err = db.Query("DELETE FROM requests WHERE url = ?", url)
 	if err != nil {
-		Error(err)
+		returnErrorTemplate(w, err)
+		return
 	}
 	defer db.Close()
 

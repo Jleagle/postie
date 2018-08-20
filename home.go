@@ -19,7 +19,8 @@ func newRoute(w http.ResponseWriter, r *http.Request) {
 
 	db, err := connectToSQL()
 	if err != nil {
-		Error(err)
+		returnErrorTemplate(w, err)
+		return
 	}
 
 	defer db.Close()
@@ -27,7 +28,8 @@ func newRoute(w http.ResponseWriter, r *http.Request) {
 	for {
 		randomString, err := gostrgen.RandGen(10, gostrgen.Upper|gostrgen.Digit, "", "")
 		if err != nil {
-			Error(err)
+			returnErrorTemplate(w, err)
+			return
 		}
 
 		insert, err := db.Query("INSERT INTO urls (url) VALUES (?)", randomString)
@@ -42,6 +44,8 @@ func newRoute(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 		}
-		Error(err)
+
+		returnErrorTemplate(w, err)
+		return
 	}
 }

@@ -21,7 +21,8 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 
 	match, err := regexp.MatchString("^[A-Z0-9]{10}$", url)
 	if err != nil {
-		Error(err)
+		returnErrorTemplate(w, err)
+		return
 	}
 	if !match {
 		http.NotFound(w, r)
@@ -33,23 +34,27 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 	// Gather data
 	headers, err := json.Marshal(r.Header)
 	if err != nil {
-		Error(err)
+		returnErrorTemplate(w, err)
+		return
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		Error(err)
+		returnErrorTemplate(w, err)
+		return
 	}
 
 	form, err := json.Marshal(r.Form)
 	if err != nil {
-		Error(err)
+		returnErrorTemplate(w, err)
+		return
 	}
 
 	// Save request to MySQL
 	db, err := connectToSQL()
 	if err != nil {
-		Error(err)
+		returnErrorTemplate(w, err)
+		return
 	}
 
 	defer db.Close()
@@ -68,7 +73,8 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 		request.Time, request.URL, request.Method, request.IP, request.Post, request.Headers, request.Body, request.Referer)
 
 	if queryError != nil {
-		Error(err)
+		returnErrorTemplate(w, err)
+		return
 	}
 
 	// Check if there are websockets to send to

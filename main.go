@@ -106,6 +106,11 @@ func returnTemplate(w http.ResponseWriter, page string, pageData interface{}) {
 	}
 }
 
+func returnErrorTemplate(w http.ResponseWriter, err error) {
+	Error(err)
+	returnTemplate(w, "error", nil)
+}
+
 // request is the database row
 type request struct {
 	URL     string `json:"url"`
