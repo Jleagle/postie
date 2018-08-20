@@ -58,7 +58,7 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 		vars.Domain = "https://postie.pro"
 	} else {
 		vars.Protocol = "ws"
-		vars.Domain = "http://localhost:8081"
+		vars.Domain = "http://localhost:8080"
 	}
 	vars.URL = url
 
