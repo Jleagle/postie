@@ -3,14 +3,14 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/gorilla/websocket"
-	"strings"
-	"math/rand"
 )
 
 var webSockets map[string]map[int]*websocket.Conn

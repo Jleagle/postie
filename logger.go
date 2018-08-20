@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/rollbar/rollbar-go"
-	"os"
 	"fmt"
+	"os"
 	"time"
+
+	"github.com/rollbar/rollbar-go"
 )
 
 const (
