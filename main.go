@@ -16,7 +16,7 @@ import (
 func main() {
 
 	rollbar.SetToken(os.Getenv("POSTIE_ROLLBAR_PRIVATE"))
-	rollbar.SetEnvironment(os.Getenv("ENV"))           // defaults to "development"
+	rollbar.SetEnvironment(os.Getenv("POSTIE_ENV"))           // defaults to "development"
 	rollbar.SetCodeVersion("dev-master")               // optional Git hash/branch/tag (required for GitHub integration)
 	rollbar.SetServerRoot("github.com/Jleagle/postie") // path of project (required for GitHub integration and non-project stacktrace collapsing)
 
