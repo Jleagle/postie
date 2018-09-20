@@ -57,8 +57,6 @@ func endpointRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//defer db.Close()
-
 	request := request{}
 	request.Time = time.Now().UnixNano()
 	request.URL = url

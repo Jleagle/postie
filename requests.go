@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi"
 )
@@ -17,14 +18,11 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//defer db.Close()
-
 	rows, err := db.Query("SELECT * FROM requests WHERE url = ? ORDER BY time ASC", url)
 	if err != nil {
 		returnErrorTemplate(w, err)
 		return
 	}
-	//defer db.Close()
 
 	var results []request
 	request := request{}
@@ -56,16 +54,23 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 
 	vars := requestTemplateVars{}
 	vars.Requests = string(resultsByteArray)
+	vars.URL = url
+	vars.Domain = os.Getenv("POSTIE_DOMAIN")
+
 	if r.Header.Get("X-Forwarded-Proto") == "https" {
 		vars.Protocol = "wss"
-		vars.Domain = "https://postie.pro"
 	} else {
 		vars.Protocol = "ws"
-		vars.Domain = "http://localhost:8080"
 	}
-	vars.URL = url
 
 	returnTemplate(w, "requests", vars)
+}
+
+type requestTemplateVars struct {
+	Requests string
+	Protocol string
+	Domain   string
+	URL      string
 }
 
 func clearRoute(w http.ResponseWriter, r *http.Request) {
@@ -78,22 +83,12 @@ func clearRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//defer db.Close()
-
 	_, err = db.Query("DELETE FROM requests WHERE url = ?", url)
 	if err != nil {
 		returnErrorTemplate(w, err)
 		return
 	}
-	//defer db.Close()
 
 	http.Redirect(w, r, "/"+url+"/list", http.StatusTemporaryRedirect)
 	return
-}
-
-type requestTemplateVars struct {
-	Requests string
-	Protocol string
-	Domain   string
-	URL      string
 }
