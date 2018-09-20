@@ -17,14 +17,14 @@ func requestsRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	defer db.Close()
+	//defer db.Close()
 
 	rows, err := db.Query("SELECT * FROM requests WHERE url = ? ORDER BY time ASC", url)
 	if err != nil {
 		returnErrorTemplate(w, err)
 		return
 	}
-	defer db.Close()
+	//defer db.Close()
 
 	var results []request
 	request := request{}
@@ -78,14 +78,14 @@ func clearRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	defer db.Close()
+	//defer db.Close()
 
 	_, err = db.Query("DELETE FROM requests WHERE url = ?", url)
 	if err != nil {
 		returnErrorTemplate(w, err)
 		return
 	}
-	defer db.Close()
+	//defer db.Close()
 
 	http.Redirect(w, r, "/"+url+"/list", http.StatusTemporaryRedirect)
 	return

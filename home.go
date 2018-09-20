@@ -23,7 +23,7 @@ func newRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	defer db.Close()
+	//defer db.Close()
 
 	for {
 		randomString, err := gostrgen.RandGen(10, gostrgen.Upper|gostrgen.Digit, "", "")
