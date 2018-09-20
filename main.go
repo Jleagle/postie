@@ -16,7 +16,7 @@ import (
 func main() {
 
 	rollbar.SetToken(os.Getenv("POSTIE_ROLLBAR_PRIVATE"))
-	rollbar.SetEnvironment(os.Getenv("POSTIE_ENV"))           // defaults to "development"
+	rollbar.SetEnvironment(os.Getenv("POSTIE_ENV"))    // defaults to "development"
 	rollbar.SetCodeVersion("dev-master")               // optional Git hash/branch/tag (required for GitHub integration)
 	rollbar.SetServerRoot("github.com/Jleagle/postie") // path of project (required for GitHub integration and non-project stacktrace collapsing)
 
@@ -124,7 +124,13 @@ type request struct {
 }
 
 func (r request) GetInfo() string {
-	bytes, _ := json.Marshal(map[string]interface{}{"HTTP Method": r.Method, "IP": r.IP, "Time": r.Time, "Referer": r.Referer, "Body": r.Body})
+	bytes, _ := json.Marshal(map[string]interface{}{
+		"HTTP Method": r.Method,
+		"IP":          r.IP,
+		"Time":        r.Time,
+		"Referer":     r.Referer,
+		"Body":        r.Body,
+	})
 	return string(bytes)
 }
 
