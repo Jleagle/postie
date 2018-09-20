@@ -72,6 +72,11 @@ func connectToSQL() (*sql.DB, error) {
 		if err != nil {
 			return db, err
 		}
+
+		err = db.Ping()
+		if err != nil {
+			return db, err
+		}
 	}
 
 	return db, err
